@@ -12,7 +12,7 @@ namespace Liszt.Services
   /// to A. The nature of this class allows multiple of the same type category of information,
   /// for example "note recognition" to be generated easily without storing discrete permutations.
   /// </summary>
-  public class QuestionBuilder<T> where T : Answer
+  public class QuestionBuilder<T> where T : Answer<T>
   {
     private List<T> _optionPool;
     private string _baseUri;
@@ -70,7 +70,7 @@ namespace Liszt.Services
     }
 
     /// <summary>
-    /// Method <c>Random</c> creates a FlashQuestionDTO from a random selection of <c>num</c>
+    /// Method <c>Random</c> creates a MultipleChoice question from a random selection of <c>num</c>
     /// options.
     /// <param name="prompt">The text to display for the question</param>
     /// <param name="num">The number of options to have. Defaults to 4.</param>

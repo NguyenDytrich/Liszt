@@ -2,7 +2,7 @@
 
 namespace Liszt.Models.Answers
 {
-  public class Pitch : Answer
+  public class Pitch : Answer<Pitch>
   {
     public int IntegerClass { get; set; }
     public List<string> LetterClass { get; set; }
@@ -12,9 +12,9 @@ namespace Liszt.Models.Answers
       LetterClass = new List<string>();
     }
 
-    public override string ToString()
-    {
-      return Id;
+    public override bool Equals(Pitch a) {
+      return a.IntegerClass == IntegerClass;
     }
+    
   }
 }

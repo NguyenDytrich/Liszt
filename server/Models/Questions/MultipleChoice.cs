@@ -5,7 +5,7 @@ using Liszt.Models.Answers;
 namespace Liszt.Models.Questions
 {
   [FirestoreData]
-  public class MultipleChoice<T> : Question where T : Answer
+  public class MultipleChoice<T> : Question where T : Answer<T>
   {
     public List<T> OptionPool { get; set; }
 
