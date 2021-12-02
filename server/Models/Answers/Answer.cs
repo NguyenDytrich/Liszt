@@ -10,7 +10,7 @@ namespace Liszt.Models.Answers
 
     public override bool Equals(object o) {
       if (o.GetType() != typeof(T)) {
-        return false;
+        throw new ArgumentException($"Cannot compare type of {o.GetType()} to type of {typeof(T)}");
       }
       return Equals((T)o);
     }

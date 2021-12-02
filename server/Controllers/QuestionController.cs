@@ -19,10 +19,10 @@ namespace Liszt.Controllers
       PitchQuiz = new QuestionBuilder<Pitch>("note_recognition/notation");
 
       var pitchopts = new List<Pitch>() {
-                                new Pitch() { Id = "C", IntegerClass = 0, LetterClass = {"C"} },
-                                new Pitch() { Id = "C#", IntegerClass = 1, LetterClass = {"C#", "Db"} },
-                                new Pitch() { Id = "D", IntegerClass = 2, LetterClass = {"D"} },
-                                new Pitch() { Id = "D#", IntegerClass = 3, LetterClass = {"D#", "Eb"} },
+                                new Pitch(0, 'C', Accidental.NATURAL),
+                                new Pitch(1, 'C', Accidental.SHARP),
+                                new Pitch(2, 'D', Accidental.NATURAL),
+                                new Pitch(3, 'D', Accidental.SHARP),
                         };
 
       PitchQuiz.AddOptions(pitchopts);
