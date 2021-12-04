@@ -5,9 +5,12 @@ using System.Text.RegularExpressions;
 
 namespace Liszt.Models.Answers
 {
+  /// <summary>
+  /// A representation of possible pitch classes.
+  /// </summary>
   public class PitchClass
   {
-    private static IDictionary<int, Pitch> _naturals = new Dictionary<int, Pitch>() {
+    private static readonly IDictionary<int, Pitch> _naturals = new Dictionary<int, Pitch>() {
           { 0, new Pitch(0, 'C', Accidental.NATURAL) },
           { 2, new Pitch(2, 'D', Accidental.NATURAL) },
           { 4, new Pitch(4, 'E', Accidental.NATURAL) },
@@ -16,7 +19,7 @@ namespace Liszt.Models.Answers
           { 9, new Pitch(9, 'A', Accidental.NATURAL) },
           { 11, new Pitch(11, 'B', Accidental.NATURAL) },
         };
-    private static IDictionary<int, Pitch> _sharps = new Dictionary<int, Pitch>() {
+    private static readonly IDictionary<int, Pitch> _sharps = new Dictionary<int, Pitch>() {
           { 0, new Pitch(0, 'B', Accidental.SHARP) },
           { 1, new Pitch(1, 'C', Accidental.SHARP) },
           { 3, new Pitch(3, 'D', Accidental.SHARP) },
@@ -25,7 +28,7 @@ namespace Liszt.Models.Answers
           { 8, new Pitch(8, 'G', Accidental.SHARP) },
           { 10, new Pitch(10, 'A', Accidental.SHARP) },
         };
-    private static IDictionary<int, Pitch> _flats = new Dictionary<int, Pitch>() {
+    private static readonly IDictionary<int, Pitch> _flats = new Dictionary<int, Pitch>() {
           { 1, new Pitch(1, 'D', Accidental.FLAT) },
           { 3, new Pitch(3, 'E', Accidental.FLAT) },
           { 4, new Pitch(4, 'F', Accidental.FLAT) },
@@ -44,18 +47,24 @@ namespace Liszt.Models.Answers
       get => GetValue(key);
     }
 
+    public Pitch this[int key, Accidental accidental]
+    {
+      get => GetValue(key, accidental);
+    }
+
     /// <summary>
     /// Find a value by its human-readable letter name, case insensitive.
     /// </summary>
     /// <param name="key">A string in the letter name convention. Ex.'C#'</param>
-    /// <returns></returns>
+    /// <returns>A <c>Pitch</c> representation of the passed letter PitchClass</returns>
+    /// <exception cref="ArgumentException">When passed a string that cannot be parsed as a pitch</exception>
     public static Pitch GetValue(string key)
     {
 
-      string pattern = @"^[a-gA-G][#b]?$";
+      string pattern = @"^[A-G][#b]?$";
       var r = new Regex(pattern);
       var match = r.Match(key);
-      if (match == null || key.Length > 2) throw new ArgumentException("Expected key in the form of [a-gA-g][#b]?.");
+      if (match.Success == false || key.Length > 2) throw new ArgumentException("Expected key in the form of [A-g][#b]?.");
 
       char accidental = key.Length > 1 ? key[1] : ' ';
       switch (accidental)
@@ -69,13 +78,22 @@ namespace Liszt.Models.Answers
       }
     }
 
-    public static Pitch GetValue(int pitchClass, Accidental a = Accidental.SHARP)
+    /// <summary>
+    /// Find a value by its integer class, defaulting to the sharp spelling if it is an accidental.
+    /// </summary>
+    /// <param name="pitchClass">The integer representation of the pitch class</param>
+    /// <param name="accidental">The <c>Accidental</c> to spell accidental notes with. Defaults to <c>Accidental.SHARP.</param>
+    /// <returns>A <c>Pitch</c> representation of the pitch class for the given integer</returns>
+    /// <exception cref="IndexOutOfRangeException">When passed an invalid pitch class integer.</exception>
+    /// <exception cref="KeyNotFoundException">If no result is found by the passed key, despite being passed a valid integer value</exception>
+    public static Pitch GetValue(int pitchClass, Accidental accidental = Accidental.SHARP)
     {
+      if (pitchClass > 11 || pitchClass < 0) throw new IndexOutOfRangeException("Expected pitch class index between [0..12]");
       Pitch result;
       var found = _naturals.TryGetValue(pitchClass, out result);
       if (!found)
       {
-        switch (a)
+        switch (accidental)
         {
           case Accidental.SHARP:
             found = _sharps.TryGetValue(pitchClass, out result);

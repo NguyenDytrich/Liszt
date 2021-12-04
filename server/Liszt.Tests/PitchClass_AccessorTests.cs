@@ -1,4 +1,10 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using Liszt.Models.Answers;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Xunit;
 
 namespace Liszt.Tests
@@ -95,5 +101,101 @@ namespace Liszt.Tests
             Assert.Equal(m.IntegerClass, pitchClass);
             Assert.Equal(m.LetterClass, expected);
         }
+
+        [Theory]
+        [InlineData(0, "C")]
+        [InlineData(1, "Db")]
+        [InlineData(2, "D")]
+        [InlineData(3, "Eb")]
+        [InlineData(4, "E")]
+        [InlineData(5, "F")]
+        [InlineData(6, "Gb")]
+        [InlineData(7, "G")]
+        [InlineData(8, "Ab")]
+        [InlineData(9, "A")]
+        [InlineData(10, "Bb")]
+        [InlineData(11, "B")]
+        public void IntegerClassAccesorGetsFlats(int pitchClass, string expected)
+        {
+            var a = PitchClass[pitchClass, Accidental.FLAT];
+            Assert.Equal(a.IntegerClass, pitchClass);
+            Assert.Equal(a.LetterClass, expected);
+
+            var m = PitchClass.GetValue(pitchClass, Accidental.FLAT);
+            Assert.Equal(m.IntegerClass, pitchClass);
+            Assert.Equal(m.LetterClass, expected);
+        }
+
+        [Theory]
+        [ClassData(typeof(PitchClassAccessorData))]
+        public void AccessorRegexTest(bool throws, string key)
+        {
+            if (throws)
+            {
+                Assert.Throws<ArgumentException>(() => PitchClass[key]);
+            }
+            else
+            {
+                Assert.Equal(PitchClass[key].LetterClass.ToUpper(), key.ToUpper());
+            }
+        }
+
+        [Fact]
+        public void AccessorIntegerTest()
+        {
+            for (var i = 0; i < 11; i++)
+            {
+                Assert.IsType<Pitch>(PitchClass[i]);
+            }
+
+            for (var i = -100; i < 0; i++)
+            {
+                Assert.Throws<IndexOutOfRangeException>(() => PitchClass[i]);
+            }
+
+            for (var i = 12; i < 100; i++)
+            {
+                Assert.Throws<IndexOutOfRangeException>(() => PitchClass[i]);
+            }
+        }
+    }
+
+    class PitchClassAccessorData : IEnumerable<object[]>
+    {
+        private static List<string> _stringThrows = new List<string> {
+            "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
+            "ca", "h#", "jjj", "Hb",
+            "c", "d", "e", "f", "g", "a", "b",
+            "c#", "d#", "e#", "f#", "g#", "a#", "b#",
+            "cb", "db", "eb", "fb", "gb", "ab", "bb",
+        };
+
+        private static List<string> _stringPass = new List<string> {
+            "C", "D", "E", "F", "G", "A", "B",
+            "C#", "D#", "E#", "F#", "G#", "A#", "B#",
+            "Cb", "Db", "Eb", "Fb", "Gb", "Ab", "Bb"
+        };
+
+        private List<object[]> combine()
+        {
+            var combined = new List<object[]>();
+            foreach (var v in _stringThrows)
+            {
+                combined.Add(new object[] { true, v });
+            }
+            foreach (var v in _stringPass)
+            {
+                combined.Add(new object[] { false, v });
+            }
+            return combined;
+        }
+
+        public IEnumerator<object[]> GetEnumerator()
+        {
+            var combined = combine();
+            return combined.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
 }
