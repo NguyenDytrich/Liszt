@@ -8,7 +8,7 @@ namespace Liszt.Models.Answers
   /// <summary>
   /// A representation of possible pitch classes.
   /// </summary>
-  public class PitchClass
+  public class Pitches
   {
     private static readonly IDictionary<int, Pitch> _naturals = new Dictionary<int, Pitch>() {
           { 0, new Pitch(0, 'C', Accidental.NATURAL) },

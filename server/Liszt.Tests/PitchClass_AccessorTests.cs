@@ -1,17 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using Liszt.Models.Answers;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Xunit;
 
 namespace Liszt.Tests
 {
     public class PitchClass_AccessorTests
     {
-        PitchClass PitchClass = new PitchClass();
+        Pitches Pitches = new Pitches();
 
         [Theory]
         [InlineData("C", 0)]
@@ -23,7 +20,7 @@ namespace Liszt.Tests
         [InlineData("B", 11)]
         public void GetNaturalsTest_Accessor(string pitch, int expected)
         {
-            Assert.Equal(PitchClass[pitch].IntegerClass, expected);
+            Assert.Equal(Pitches[pitch].IntegerClass, expected);
         }
 
         [Theory]
@@ -36,7 +33,7 @@ namespace Liszt.Tests
         [InlineData("B", 11)]
         public void GetNaturalsTest_Method(string pitch, int expected)
         {
-            Assert.Equal(PitchClass.GetValue(pitch).IntegerClass, expected);
+            Assert.Equal(Pitches.GetValue(pitch).IntegerClass, expected);
         }
 
         [Theory]
@@ -49,7 +46,7 @@ namespace Liszt.Tests
         [InlineData("A#", 10)]
         public void GetSharps_Accessor(string pitch, int expected)
         {
-            Assert.Equal(PitchClass[pitch].IntegerClass, expected);
+            Assert.Equal(Pitches[pitch].IntegerClass, expected);
         }
 
         [Theory]
@@ -62,7 +59,7 @@ namespace Liszt.Tests
         [InlineData("A#", 10)]
         public void GetSharps_Method(string pitch, int expected)
         {
-            Assert.Equal(PitchClass.GetValue(pitch).IntegerClass, expected);
+            Assert.Equal(Pitches.GetValue(pitch).IntegerClass, expected);
         }
 
         [Theory]
@@ -75,7 +72,7 @@ namespace Liszt.Tests
         [InlineData("Cb", 11)]
         public void GetFlats(string pitch, int expected)
         {
-            Assert.Equal(PitchClass[pitch].IntegerClass, expected);
+            Assert.Equal(Pitches[pitch].IntegerClass, expected);
         }
 
         [Theory]
@@ -93,11 +90,11 @@ namespace Liszt.Tests
         [InlineData(11, "B")]
         public void IntegerClassDefaultsNaturalOrSharps(int pitchClass, string expected)
         {
-            var a = PitchClass[pitchClass];
+            var a = Pitches[pitchClass];
             Assert.Equal(a.IntegerClass, pitchClass);
             Assert.Equal(a.LetterClass, expected);
 
-            var m = PitchClass.GetValue(pitchClass);
+            var m = Pitches.GetValue(pitchClass);
             Assert.Equal(m.IntegerClass, pitchClass);
             Assert.Equal(m.LetterClass, expected);
         }
@@ -117,11 +114,11 @@ namespace Liszt.Tests
         [InlineData(11, "B")]
         public void IntegerClassAccesorGetsFlats(int pitchClass, string expected)
         {
-            var a = PitchClass[pitchClass, Accidental.FLAT];
+            var a = Pitches[pitchClass, Accidental.FLAT];
             Assert.Equal(a.IntegerClass, pitchClass);
             Assert.Equal(a.LetterClass, expected);
 
-            var m = PitchClass.GetValue(pitchClass, Accidental.FLAT);
+            var m = Pitches.GetValue(pitchClass, Accidental.FLAT);
             Assert.Equal(m.IntegerClass, pitchClass);
             Assert.Equal(m.LetterClass, expected);
         }
@@ -132,11 +129,11 @@ namespace Liszt.Tests
         {
             if (throws)
             {
-                Assert.Throws<ArgumentException>(() => PitchClass[key]);
+                Assert.Throws<ArgumentException>(() => Pitches[key]);
             }
             else
             {
-                Assert.Equal(PitchClass[key].LetterClass.ToUpper(), key.ToUpper());
+                Assert.Equal(Pitches[key].LetterClass.ToUpper(), key.ToUpper());
             }
         }
 
@@ -145,17 +142,17 @@ namespace Liszt.Tests
         {
             for (var i = 0; i < 11; i++)
             {
-                Assert.IsType<Pitch>(PitchClass[i]);
+                Assert.IsType<Pitch>(Pitches[i]);
             }
 
             for (var i = -100; i < 0; i++)
             {
-                Assert.Throws<IndexOutOfRangeException>(() => PitchClass[i]);
+                Assert.Throws<IndexOutOfRangeException>(() => Pitches[i]);
             }
 
             for (var i = 12; i < 100; i++)
             {
-                Assert.Throws<IndexOutOfRangeException>(() => PitchClass[i]);
+                Assert.Throws<IndexOutOfRangeException>(() => Pitches[i]);
             }
         }
     }
