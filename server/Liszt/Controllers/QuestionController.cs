@@ -36,10 +36,10 @@ namespace Liszt.Controllers
     }
 
     [HttpGet("pitch")]
-    public IEnumerable<MultipleChoice<Pitch>> Get()
+    public IEnumerable<MultipleChoice<Pitch>> Get([FromQuery]int count = 1)
     {
       var questions = new List<MultipleChoice<Pitch>>();
-      for (int i = 0; i < 20; i++)
+      for (int i = 0; i < count; i++)
       {
         questions.Add(PitchQuiz.Random("Identify the following pitch."));
       }
