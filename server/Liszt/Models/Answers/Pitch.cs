@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
+using Liszt.Converters;
+using Google.Cloud.Firestore;
 
 namespace Liszt.Models.Answers
 {
@@ -19,8 +20,12 @@ namespace Liszt.Models.Answers
   /// <summary>
   /// A representation of a pitch class as an Answer.
   /// </summary>
+  [FirestoreData(ConverterType = typeof(PitchConverter))]
   public class Pitch : Answer<Pitch>
   {
+    public override string Type { get => "pitch_class"; }
+    public override string Id { get => LetterClass; }
+
     /// <value><c>IntegerClass</c> is the integer-representation of the pitch class starting at C=0</value>
     public int IntegerClass { get; }
     /// <value><c>_letterClass</c> is the alphabetical representation of a pitch</value>
@@ -100,7 +105,7 @@ namespace Liszt.Models.Answers
     }
 
     public override int GetHashCode() {
-      return Id.GetHashCode();
+      return this.ToString().GetHashCode();
     }
 
   }

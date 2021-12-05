@@ -1,36 +1,36 @@
 ﻿using System;
 using Google.Cloud.Firestore;
+using Liszt.Converters;
+using Liszt.Models.Answers;
 using Liszt.Models.Questions;
 
 namespace Liszt.Models
 {
-  [FirestoreData]
-  public class QuestionResponse<T> where T : Question
+  public class QuestionResponse<Q, A>
+    where A : Answer<A>
+    where Q : Question
   {
-    [FirestoreProperty]
     public string UserId { get; set; }
 
-    [FirestoreProperty("type")]
-    private string _type { get; set; }
-    public string Type => nameof(T);
+    public DateTime SubmittedAt { get; set; }
 
-    /// <value>Property <c>FlashQuestion</c> is an embedded document of the question corresponding
-    /// to this response.
-    /// <seealso cref="FlashQuestion"/>
-    [FirestoreProperty]
-    public T Question { get; set; }
+    public DateTime RecievedAt { get; set; }
 
-    [FirestoreProperty("submittedAt")]
-    private Timestamp _submittedAt { get; set; }
+    public QuestionData<Q, A> Question { get; set; }
 
-    [FirestoreProperty("recievedAt")]
-    private Timestamp _recievedAt { get; set; }
-
-    [FirestoreProperty]
-    public bool Correct { get; set; }
-
-    public DateTime SubmittedAt => _submittedAt.ToDateTime();
-    public DateTime RecievedAt => _recievedAt.ToDateTime();
     public TimeSpan DwellTime => SubmittedAt - RecievedAt;
+  }
+
+  public class QuestionData<Q, A>
+    where Q : Question
+    where A : Answer<A>
+  {
+    public string Id { get; set; }
+
+    public A SubmittedAnswer { get; set; }
+
+    public Q Question { get; set; }
+
+    public bool Correct { get; set; }
   }
 }

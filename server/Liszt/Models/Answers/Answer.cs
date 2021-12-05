@@ -5,8 +5,8 @@ namespace Liszt.Models.Answers
 {
   public abstract class Answer<T>: IEquatable<T>
   {
-    public string Id;
-    public override string ToString() => Id;
+    public abstract string Type { get; }
+    public abstract string Id { get; }
 
     public override bool Equals(object o) {
       if(o is null) {
@@ -33,7 +33,7 @@ namespace Liszt.Models.Answers
 
     public override int GetHashCode()
     {
-      return Id.GetHashCode();
+      return this.ToString().GetHashCode();
     }
   }
 }

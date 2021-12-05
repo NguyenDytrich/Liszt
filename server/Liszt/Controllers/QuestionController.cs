@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Liszt.Models;
 using Liszt.Models.Answers;
 using Liszt.Models.Questions;
 using Liszt.Services;
@@ -11,6 +14,7 @@ namespace Liszt.Controllers
   public class QuestionController : ControllerBase
   {
     private readonly IFirestoreDb _firestore;
+    private static readonly Pitches pitches = new Pitches();
     private readonly QuestionBuilder<Pitch> PitchQuiz;
 
     public QuestionController(IFirestoreDb firestore)
@@ -19,11 +23,14 @@ namespace Liszt.Controllers
       PitchQuiz = new QuestionBuilder<Pitch>("note_recognition/notation");
 
       var pitchopts = new List<Pitch>() {
-                                new Pitch(0, 'C', Accidental.NATURAL),
-                                new Pitch(1, 'C', Accidental.SHARP),
-                                new Pitch(2, 'D', Accidental.NATURAL),
-                                new Pitch(3, 'D', Accidental.SHARP),
-                        };
+        pitches["C"],
+        pitches["D"],
+        pitches["E"],
+        pitches["F"],
+        pitches["G"],
+        pitches["A"],
+        pitches["B"]
+      };
 
       PitchQuiz.AddOptions(pitchopts);
     }
@@ -37,6 +44,12 @@ namespace Liszt.Controllers
         questions.Add(PitchQuiz.Random("Identify the following pitch."));
       }
       return questions;
+    }
+
+    [HttpPost("answer")]
+    public async Task Post(QuestionResponseDTO requestBody)
+    {
+      var reference = await _firestore.Collection($"question_responses").AddAsync(requestBody);
     }
   }
 }
