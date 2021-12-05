@@ -4,14 +4,14 @@ using System.Text.Json.Nodes;
 using Google.Cloud.Firestore;
 using Liszt.Converters;
 
-namespace Liszt.Models
+namespace Liszt.Models.DTO
 {
-  [FirestoreData(ConverterType = typeof(QuestionResponseConverter))]
-  public class QuestionResponseDTO
+  /// <summary>
+  /// A model of a submitted quiz response
+  /// </summary>
+  public class AnswerSubmission
   {
     public string UserId { get; set; }
-
-    public bool Correct { get; set; }
 
     public DateTime SubmittedAt { get; set; }
 

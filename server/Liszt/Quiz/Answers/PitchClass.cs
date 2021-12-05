@@ -1,6 +1,7 @@
 ﻿using System;
 using Liszt.Converters;
 using Google.Cloud.Firestore;
+using System.Text.Json.Serialization;
 
 namespace Liszt.Quiz.Answers
 {
@@ -20,20 +21,21 @@ namespace Liszt.Quiz.Answers
   /// <summary>
   /// A representation of a pitch class as an Answer.
   /// </summary>
-  [FirestoreData(ConverterType = typeof(PitchConverter))]
-  public class Pitch : Answer<Pitch>
+  public class PitchClass : Answer<PitchClass>
   {
+    [JsonPropertyName("type")]
     public override string Type { get => "pitch_class"; }
     public override string Id { get => LetterClass; }
 
     /// <value><c>IntegerClass</c> is the integer-representation of the pitch class starting at C=0</value>
+    [JsonPropertyName("integerClass")]
     public int IntegerClass { get; }
     /// <value><c>_letterClass</c> is the alphabetical representation of a pitch</value>
     private readonly char _letterClass;
     /// <value><c>_accidental</c> is the accidental that this Pitch will be spelled with</value>
     private readonly Accidental _accidental;
 
-    public Pitch(int integerClass, char letterClass, Accidental accidental)
+    public PitchClass(int integerClass, char letterClass, Accidental accidental)
     {
       IntegerClass = integerClass;
       _letterClass = letterClass;
@@ -41,6 +43,7 @@ namespace Liszt.Quiz.Answers
 
     }
 
+    [JsonPropertyName("letterClass")]
     public string LetterClass
     {
       get
@@ -73,9 +76,9 @@ namespace Liszt.Quiz.Answers
       {
         return (int)o == IntegerClass;
       }
-      else if (o is Pitch)
+      else if (o is PitchClass)
       {
-        return Equals((Pitch)o);
+        return Equals((PitchClass)o);
       }
       else
       {
@@ -88,7 +91,7 @@ namespace Liszt.Quiz.Answers
     /// </summary>
     /// <param name="a">A pitch to compare with</param>
     /// <returns>Whether or not two Pitches are equivalent</returns>
-    public override bool Equals(Pitch a)
+    public override bool Equals(PitchClass a)
     {
       return a.IntegerClass == IntegerClass
             && a.LetterClass == LetterClass;
@@ -99,7 +102,7 @@ namespace Liszt.Quiz.Answers
     /// </summary>
     /// <param name="a">A pitch to compare with</param>
     /// <returns>Whether or not two Pitches are equivalent, disregarding spelling</returns>
-    public bool EnharmonicEquals(Pitch a)
+    public bool EnharmonicEquals(PitchClass a)
     {
       return a.IntegerClass == IntegerClass;
     }

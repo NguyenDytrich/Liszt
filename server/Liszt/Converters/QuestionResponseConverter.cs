@@ -7,12 +7,14 @@ using Liszt.Quiz.Answers;
 
 namespace Liszt.Converters
 {
-  public class QuestionResponseConverter : IFirestoreConverter<QuestionResponseDTO>
+  /// <summary>
+  /// Firestore converter class for <c>FirestoreQuestionResponse</c>
+  /// </summary>
+  public class QuestionResponseConverter : IFirestoreConverter<FirestoreQuestionResponse>
   {
-    private static readonly Pitches Pitches = new Pitches();
-    public object ToFirestore(QuestionResponseDTO value)
+    public object ToFirestore(FirestoreQuestionResponse value)
     {
-      string questionType = (string)value.Question["Type"];
+      string questionType = (string)value.Question["type"];
 
       object answer = ConvertToAnswer(value.SubmittedAnswer);
       object questionData;
@@ -23,7 +25,9 @@ namespace Liszt.Converters
           var optionPool = new List<object>();
           foreach (var o in value.Question["optionPool"].AsArray())
           {
-            optionPool.Add(ConvertToAnswer(o));
+            var a = ConvertToAnswer(o);
+            if(a != null)
+              optionPool.Add(a);
           }
 
           questionData = new
@@ -36,7 +40,7 @@ namespace Liszt.Converters
           };
           break;
         default:
-          throw new NotSupportedException();
+          throw new ArgumentException($"Unkown type: {questionType} for object {value.Question.ToJsonString()}");
       }
 
       return new
@@ -51,16 +55,18 @@ namespace Liszt.Converters
       };
     }
 
-    public QuestionResponseDTO FromFirestore(object value)
+    public FirestoreQuestionResponse FromFirestore(object value)
     {
       object answer;
-      CastAnswerFromObject<Pitch>(value, out answer);
+      CastAnswerFromObject<PitchClass>(value, out answer);
 
       throw new NotImplementedException();
     }
 
     private object ConvertToAnswer(JsonNode value)
     {
+      if(value is null) return null;
+
       string answerType = (string)value["type"];
       switch (answerType)
       {
@@ -72,7 +78,7 @@ namespace Liszt.Converters
             LetterClass = (string)value["letterClass"]
           };
         default:
-          throw new NotSupportedException();
+          throw new ArgumentException($"Unknown type: {answerType} in object {value.ToJsonString()}");
       };
     }
 
