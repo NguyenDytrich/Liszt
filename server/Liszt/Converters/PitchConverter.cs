@@ -1,6 +1,6 @@
 using System;
 using Google.Cloud.Firestore;
-using Liszt.Models.Answers;
+using Liszt.Quiz.Answers;
 
 namespace Liszt.Converters {
   public class PitchConverter : IFirestoreConverter<Pitch>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text.Json.Nodes;
 using Google.Cloud.Firestore;
 using Liszt.Models;
-using Liszt.Models.Answers;
+using Liszt.Quiz.Answers;
 
 namespace Liszt.Converters
 {

@@ -2,7 +2,7 @@
 using Liszt.Converters;
 using Google.Cloud.Firestore;
 
-namespace Liszt.Models.Answers
+namespace Liszt.Quiz.Answers
 {
   /// <summary>
   /// Enum <c>Accidental</c> is a list of possible accidentals and their distance

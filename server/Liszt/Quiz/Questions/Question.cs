@@ -1,6 +1,6 @@
-﻿using Liszt.Models.Answers;
+﻿using Liszt.Quiz.Answers;
 
-namespace Liszt.Models.Questions
+namespace Liszt.Quiz.Questions
 {
   public abstract class Question
   {

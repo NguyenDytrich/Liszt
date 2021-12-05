@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Liszt.Models;
-using Liszt.Models.Answers;
-using Liszt.Models.Questions;
+using Liszt.Quiz.Answers;
+using Liszt.Quiz.Questions;
 using Liszt.Services;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,8 +1,8 @@
 ﻿using System;
 using Google.Cloud.Firestore;
 using Liszt.Converters;
-using Liszt.Models.Answers;
-using Liszt.Models.Questions;
+using Liszt.Quiz.Answers;
+using Liszt.Quiz.Questions;
 
 namespace Liszt.Models
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data.Common;
 
-namespace Liszt.Models.Answers
+namespace Liszt.Quiz.Answers
 {
   public abstract class Answer<T>: IEquatable<T>
   {

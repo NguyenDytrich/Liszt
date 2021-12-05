@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Liszt.Models.Answers;
+using Liszt.Quiz.Answers;
 using Xunit;
 
 namespace Liszt.Tests

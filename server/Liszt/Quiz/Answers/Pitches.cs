@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Liszt.Models.Answers
+namespace Liszt.Quiz.Answers
 {
   /// <summary>
   /// A representation of possible pitch classes.
