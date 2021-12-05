@@ -7,13 +7,13 @@ namespace Liszt.Tests
 {
     public class Pitch_EqualityTests
     {
-        public static Pitch p = new Pitch(0, 'C', Accidental.NATURAL);
-        public static Pitch q = new Pitch(1, 'C', Accidental.SHARP);
+        public static PitchClass p = new PitchClass(0, 'C', Accidental.NATURAL);
+        public static PitchClass q = new PitchClass(1, 'C', Accidental.SHARP);
 
         [Fact]
         public void EqualsOperator_True()
         {
-            var j = new Pitch(0, 'C', Accidental.NATURAL);
+            var j = new PitchClass(0, 'C', Accidental.NATURAL);
             Assert.True(p == j);
         }
 
@@ -34,7 +34,7 @@ namespace Liszt.Tests
         [Fact]
         public void EqualsMethod_True()
         {
-            var j = new Pitch(0, 'C', Accidental.NATURAL);
+            var j = new PitchClass(0, 'C', Accidental.NATURAL);
             Assert.True(p.Equals(j));
         }
 

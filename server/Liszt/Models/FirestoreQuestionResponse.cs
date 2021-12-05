@@ -6,8 +6,11 @@ using Liszt.Converters;
 
 namespace Liszt.Models
 {
+  /// <summary>
+  /// A DTO for storing and retrieving documents in Firestore
+  /// </summary>
   [FirestoreData(ConverterType = typeof(QuestionResponseConverter))]
-  public class QuestionResponseDTO
+  public class FirestoreQuestionResponse
   {
     public string UserId { get; set; }
 

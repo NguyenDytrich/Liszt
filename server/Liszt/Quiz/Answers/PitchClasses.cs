@@ -8,49 +8,35 @@ namespace Liszt.Quiz.Answers
   /// <summary>
   /// A representation of possible pitch classes.
   /// </summary>
-  public class Pitches
+  public class PitchClasses
   {
-    private static readonly IDictionary<int, Pitch> _naturals = new Dictionary<int, Pitch>() {
-          { 0, new Pitch(0, 'C', Accidental.NATURAL) },
-          { 2, new Pitch(2, 'D', Accidental.NATURAL) },
-          { 4, new Pitch(4, 'E', Accidental.NATURAL) },
-          { 5, new Pitch(5, 'F', Accidental.NATURAL) },
-          { 7, new Pitch(7, 'G', Accidental.NATURAL) },
-          { 9, new Pitch(9, 'A', Accidental.NATURAL) },
-          { 11, new Pitch(11, 'B', Accidental.NATURAL) },
+    private static readonly IDictionary<int, PitchClass> _naturals = new Dictionary<int, PitchClass>() {
+          { 0, new PitchClass(0, 'C', Accidental.NATURAL) },
+          { 2, new PitchClass(2, 'D', Accidental.NATURAL) },
+          { 4, new PitchClass(4, 'E', Accidental.NATURAL) },
+          { 5, new PitchClass(5, 'F', Accidental.NATURAL) },
+          { 7, new PitchClass(7, 'G', Accidental.NATURAL) },
+          { 9, new PitchClass(9, 'A', Accidental.NATURAL) },
+          { 11, new PitchClass(11, 'B', Accidental.NATURAL) },
         };
-    private static readonly IDictionary<int, Pitch> _sharps = new Dictionary<int, Pitch>() {
-          { 0, new Pitch(0, 'B', Accidental.SHARP) },
-          { 1, new Pitch(1, 'C', Accidental.SHARP) },
-          { 3, new Pitch(3, 'D', Accidental.SHARP) },
-          { 5, new Pitch(5, 'E', Accidental.SHARP) },
-          { 6, new Pitch(6, 'F', Accidental.SHARP) },
-          { 8, new Pitch(8, 'G', Accidental.SHARP) },
-          { 10, new Pitch(10, 'A', Accidental.SHARP) },
+    private static readonly IDictionary<int, PitchClass> _sharps = new Dictionary<int, PitchClass>() {
+          { 0, new PitchClass(0, 'B', Accidental.SHARP) },
+          { 1, new PitchClass(1, 'C', Accidental.SHARP) },
+          { 3, new PitchClass(3, 'D', Accidental.SHARP) },
+          { 5, new PitchClass(5, 'E', Accidental.SHARP) },
+          { 6, new PitchClass(6, 'F', Accidental.SHARP) },
+          { 8, new PitchClass(8, 'G', Accidental.SHARP) },
+          { 10, new PitchClass(10, 'A', Accidental.SHARP) },
         };
-    private static readonly IDictionary<int, Pitch> _flats = new Dictionary<int, Pitch>() {
-          { 1, new Pitch(1, 'D', Accidental.FLAT) },
-          { 3, new Pitch(3, 'E', Accidental.FLAT) },
-          { 4, new Pitch(4, 'F', Accidental.FLAT) },
-          { 6, new Pitch(6, 'G', Accidental.FLAT) },
-          { 8, new Pitch(8, 'A', Accidental.FLAT) },
-          { 10, new Pitch(10, 'B', Accidental.FLAT) },
-          { 11, new Pitch(11, 'C', Accidental.FLAT) },
+    private static readonly IDictionary<int, PitchClass> _flats = new Dictionary<int, PitchClass>() {
+          { 1, new PitchClass(1, 'D', Accidental.FLAT) },
+          { 3, new PitchClass(3, 'E', Accidental.FLAT) },
+          { 4, new PitchClass(4, 'F', Accidental.FLAT) },
+          { 6, new PitchClass(6, 'G', Accidental.FLAT) },
+          { 8, new PitchClass(8, 'A', Accidental.FLAT) },
+          { 10, new PitchClass(10, 'B', Accidental.FLAT) },
+          { 11, new PitchClass(11, 'C', Accidental.FLAT) },
         };
-
-    public Pitch this[string key]
-    {
-      get => GetValue(key);
-    }
-    public Pitch this[int key]
-    {
-      get => GetValue(key);
-    }
-
-    public Pitch this[int key, Accidental accidental]
-    {
-      get => GetValue(key, accidental);
-    }
 
     /// <summary>
     /// Find a value by its human-readable letter name, case insensitive.
@@ -58,7 +44,7 @@ namespace Liszt.Quiz.Answers
     /// <param name="key">A string in the letter name convention. Ex.'C#'</param>
     /// <returns>A <c>Pitch</c> representation of the passed letter PitchClass</returns>
     /// <exception cref="ArgumentException">When passed a string that cannot be parsed as a pitch</exception>
-    public static Pitch GetValue(string key)
+    public static PitchClass GetValue(string key)
     {
 
       string pattern = @"^[A-G][#b]?$";
@@ -86,10 +72,10 @@ namespace Liszt.Quiz.Answers
     /// <returns>A <c>Pitch</c> representation of the pitch class for the given integer</returns>
     /// <exception cref="IndexOutOfRangeException">When passed an invalid pitch class integer.</exception>
     /// <exception cref="KeyNotFoundException">If no result is found by the passed key, despite being passed a valid integer value</exception>
-    public static Pitch GetValue(int pitchClass, Accidental accidental = Accidental.SHARP)
+    public static PitchClass GetValue(int pitchClass, Accidental accidental = Accidental.SHARP)
     {
       if (pitchClass > 11 || pitchClass < 0) throw new IndexOutOfRangeException("Expected pitch class index between [0..12]");
-      Pitch result;
+      PitchClass result;
       var found = _naturals.TryGetValue(pitchClass, out result);
       if (!found)
       {
