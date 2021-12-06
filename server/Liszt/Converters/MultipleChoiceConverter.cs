@@ -49,7 +49,6 @@ namespace Liszt.Converters
       var optionPool = new List<T>();
       foreach (JsonNode o in question["optionPool"].AsArray())
       {
-        Console.WriteLine(o.ToJsonString());
         switch ((string)o["type"])
         {
           case "pitch_class":

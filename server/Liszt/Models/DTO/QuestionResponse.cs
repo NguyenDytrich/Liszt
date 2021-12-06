@@ -23,11 +23,13 @@ namespace Liszt.Models.DTO
     public A SubmittedAnswer { get; set; }
 
     public TimeSpan DwellTime => SubmittedAt - RecievedAt;
+    public bool Correct { get; set; }
 
     public FirestoreQuestionResponse ToFirestore() => new FirestoreQuestionResponse {
       UserId = UserId,
       SubmittedAt = SubmittedAt,
       RecievedAt = RecievedAt,
+      Correct = Correct,
       Question = JsonSerializer.SerializeToNode(Question, new JsonSerializerOptions {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
       }),

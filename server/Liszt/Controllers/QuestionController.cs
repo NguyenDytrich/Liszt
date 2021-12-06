@@ -60,9 +60,11 @@ namespace Liszt.Controllers
 
       if(questionType == "multiple_choice" && answerType == "pitch_class") {
         var response = MultipleChoiceConverter.FromDTO<PitchClass>(requestBody);
+        response.Correct = response.SubmittedAnswer == response.Question.Answer;
         var reference = await _firestore.Collection($"question_responses").AddAsync(response.ToFirestore());
         return;
       }
+
       throw new ArgumentException($"Invalid question-answer type pair: {questionType}, {answerType}");
     }
   }
