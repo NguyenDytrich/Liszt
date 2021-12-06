@@ -23,5 +23,7 @@ namespace Liszt.Models
     public JsonNode Question { get; set; }
 
     public JsonNode SubmittedAnswer { get; set; }
+
+    public double DwellTimeSeconds { get => (SubmittedAt - RecievedAt).TotalSeconds; }
   }
 }

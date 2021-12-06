@@ -49,7 +49,7 @@ namespace Liszt.Converters
         Correct = value.Correct,
         SubmittedAt = value.SubmittedAt,
         RecievedAt = value.RecievedAt,
-        DwellTimeSeconds = (value.SubmittedAt - value.RecievedAt).TotalSeconds,
+        DwellTimeSeconds = value.DwellTimeSeconds,
         SubmittedAnswer = answer,
         Question = questionData
       };

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Liszt.Converters;
+using Liszt.Models;
 using Liszt.Models.DTO;
 using Liszt.Quiz.Answers;
 using Liszt.Quiz.Questions;
@@ -37,7 +37,7 @@ namespace Liszt.Controllers
     }
 
     [HttpGet("pitch")]
-    public IEnumerable<MultipleChoice<PitchClass>> Get([FromQuery]int count = 1)
+    public IEnumerable<MultipleChoice<PitchClass>> Get([FromQuery] int count = 1)
     {
       var questions = new List<MultipleChoice<PitchClass>>();
       for (int i = 0; i < count; i++)
@@ -53,19 +53,25 @@ namespace Liszt.Controllers
     /// <param name="requestBody"></param>
     /// <returns></returns>
     [HttpPost("answer")]
-    public async Task Post(AnswerSubmission requestBody)
+    public async Task<FirestoreQuestionResponse> Post(AnswerSubmission requestBody)
     {
-      var answerType = (string) requestBody.SubmittedAnswer["type"];
-      var questionType = (string) requestBody.Question["type"];
+      var answerType = (string)requestBody.SubmittedAnswer["type"];
+      var questionType = (string)requestBody.Question["type"];
 
-      if(questionType == "multiple_choice" && answerType == "pitch_class") {
+      FirestoreQuestionResponse firestore;
+      if (questionType == "multiple_choice" && answerType == "pitch_class")
+      {
         var response = MultipleChoiceConverter.FromDTO<PitchClass>(requestBody);
         response.Correct = response.SubmittedAnswer == response.Question.Answer;
-        var reference = await _firestore.Collection($"question_responses").AddAsync(response.ToFirestore());
-        return;
-      }
+        firestore = response.ToFirestore();
 
-      throw new ArgumentException($"Invalid question-answer type pair: {questionType}, {answerType}");
+        var reference = await _firestore.Collection($"question_responses").AddAsync(firestore);
+      }
+      else
+      {
+        throw new ArgumentException($"Invalid question-answer type pair: {questionType}, {answerType}");
+      }
+      return firestore;
     }
   }
 }
