@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Liszt.Quiz.Answers;
+using Liszt.Quiz.Prompts;
 using Liszt.Quiz.Questions;
 
 namespace Liszt.Services
@@ -75,7 +76,7 @@ namespace Liszt.Services
     /// <param name="prompt">The text to display for the question</param>
     /// <param name="num">The number of options to have. Defaults to 4.</param>
     /// </summary>
-    public MultipleChoice<T> Random(string prompt, int num = 4)
+    public MultipleChoice<Notation, T> Random(string prompt, int num = 4)
     {
       var rand = new Random();
       var options = new List<T>();
@@ -101,10 +102,13 @@ namespace Liszt.Services
       List<T> shuffledOptions = options.OrderBy(a => rand.Next()).ToList();
 
       // Cast our result to our new flash question
-      return new MultipleChoice<T>()
+      return new MultipleChoice<Notation, T>()
       {
         Id = $"{_baseUri}/{_optionPool[answerIndex].Id}",
-        Prompt = prompt,
+        Prompt = new Notation() {
+          DisplayText = prompt,
+          // TODO: ABC string
+        },
         OptionPool = shuffledOptions,
         Answer = answer
       };

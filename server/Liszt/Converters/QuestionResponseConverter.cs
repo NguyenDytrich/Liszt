@@ -17,6 +17,7 @@ namespace Liszt.Converters
       string questionType = (string)value.Question["type"];
 
       object answer = ConvertToAnswer(value.SubmittedAnswer);
+      object prompt = ConvertPrompt(value.Question["prompt"]);
       object questionData;
 
       switch (questionType)
@@ -34,7 +35,7 @@ namespace Liszt.Converters
           {
             Id = (string)value.Question["id"],
             Type = (string)value.Question["type"],
-            Prompt = (string)value.Question["prompt"],
+            Prompt = prompt,
             OptionPool = optionPool,
             Answer = ConvertToAnswer(value.Question["answer"])
           };
@@ -80,6 +81,22 @@ namespace Liszt.Converters
         default:
           throw new ArgumentException($"Unknown type: {answerType} in object {value.ToJsonString()}");
       };
+    }
+
+    private object ConvertPrompt(JsonNode value) {
+      string promptType = (string)value["type"];
+      switch(promptType)
+      {
+        case "notation":
+          return new
+          {
+            Type = (string) value["type"],
+            DisplayText = (string) value["displayText"],
+            ABCString = (string) value["abcString"]
+          };
+        default:
+          throw new ArgumentException($"Unkown type: {promptType} in object {value.ToJsonString()}");
+      }
     }
 
     private bool CastAnswerFromObject<T>(object value, out object result)

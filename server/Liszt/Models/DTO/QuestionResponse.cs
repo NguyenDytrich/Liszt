@@ -2,6 +2,7 @@
 using Google.Cloud.Firestore;
 using Liszt.Converters;
 using Liszt.Quiz.Answers;
+using Liszt.Quiz.Prompts;
 using Liszt.Quiz.Questions;
 using Liszt.Models;
 using System.Text.Json;
@@ -9,9 +10,10 @@ using System.Text.Json.Nodes;
 
 namespace Liszt.Models.DTO
 {
-  public class QuestionResponse<Q, A>
+  public class QuestionResponse<Q, P, A>
     where A : Answer<A>
-    where Q : Question
+    where Q : Question<P>
+    where P : Prompt
   {
     public string UserId { get; set; }
 

@@ -1,11 +1,11 @@
-﻿using Liszt.Quiz.Answers;
+﻿using Liszt.Quiz.Prompts;
 
 namespace Liszt.Quiz.Questions
 {
-  public abstract class Question
+  public abstract class Question<T> where T : Prompt
   {
     public string Id { get; set; }
-    public string Prompt { get; set; }
+    public T Prompt { get; set; }
 
     public abstract string Type { get; }
   }

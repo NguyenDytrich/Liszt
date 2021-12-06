@@ -5,6 +5,7 @@ using Liszt.Converters;
 using Liszt.Models;
 using Liszt.Models.DTO;
 using Liszt.Quiz.Answers;
+using Liszt.Quiz.Prompts;
 using Liszt.Quiz.Questions;
 using Liszt.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +22,7 @@ namespace Liszt.Controllers
     public QuestionController(IFirestoreDb firestore)
     {
       _firestore = firestore;
-      PitchQuiz = new QuestionBuilder<PitchClass>("note_recognition/notation/pitch_class");
+      PitchQuiz = new QuestionBuilder<PitchClass>("note_recognition/notation/pitch");
 
       var pitchopts = new List<PitchClass>() {
         PitchClasses.GetValue("C"),
@@ -37,9 +38,9 @@ namespace Liszt.Controllers
     }
 
     [HttpGet("pitch")]
-    public IEnumerable<MultipleChoice<PitchClass>> Get([FromQuery] int count = 1)
+    public IEnumerable<MultipleChoice<Notation, PitchClass>> Get([FromQuery] int count = 1)
     {
-      var questions = new List<MultipleChoice<PitchClass>>();
+      var questions = new List<MultipleChoice<Notation, PitchClass>>();
       for (int i = 0; i < count; i++)
       {
         questions.Add(PitchQuiz.Random("Identify the following pitch."));
@@ -61,7 +62,7 @@ namespace Liszt.Controllers
       FirestoreQuestionResponse firestore;
       if (questionType == "multiple_choice" && answerType == "pitch_class")
       {
-        var response = MultipleChoiceConverter.FromDTO<PitchClass>(requestBody);
+        var response = MultipleChoiceConverter.FromDTO<Notation, PitchClass>(requestBody);
         response.Correct = response.SubmittedAnswer == response.Question.Answer;
         firestore = response.ToFirestore();
 

@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
-using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
-using Google.Cloud.Firestore;
-using Liszt.Converters;
 using Liszt.Quiz.Answers;
+using Liszt.Quiz.Prompts;
 
 namespace Liszt.Quiz.Questions
 {
-  public class MultipleChoice<T> : Question where T : Answer<T>
+  public class MultipleChoice<P, T> : Question<P> 
+    where T : Answer<T>
+    where P : Prompt
   {
     public override string Type { get => "multiple_choice"; }
 
