@@ -7,6 +7,7 @@ using Liszt.Models.DTO;
 using Liszt.Quiz.Answers;
 using Liszt.Quiz.Prompts;
 using Liszt.Quiz.Questions;
+using Liszt.Quiz.Builders;
 using Liszt.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,12 +18,12 @@ namespace Liszt.Controllers
   public class QuestionController : ControllerBase
   {
     private readonly IFirestoreDb _firestore;
-    private readonly QuestionBuilder<PitchClass> PitchQuiz;
+    private readonly SingleNoteRecognition PitchQuiz;
 
     public QuestionController(IFirestoreDb firestore)
     {
       _firestore = firestore;
-      PitchQuiz = new QuestionBuilder<PitchClass>("note_recognition/notation/pitch");
+      PitchQuiz = new SingleNoteRecognition("note_recognition/notation/pitch");
 
       var pitchopts = new List<PitchClass>() {
         PitchClasses.GetValue("C"),
@@ -34,7 +35,7 @@ namespace Liszt.Controllers
         PitchClasses.GetValue("B")
       };
 
-      PitchQuiz.AddOptions(pitchopts);
+      PitchQuiz.AddOption(pitchopts);
     }
 
     [HttpGet("pitch")]
@@ -43,7 +44,7 @@ namespace Liszt.Controllers
       var questions = new List<MultipleChoice<Notation, PitchClass>>();
       for (int i = 0; i < count; i++)
       {
-        questions.Add(PitchQuiz.Random("Identify the following pitch."));
+        questions.Add(PitchQuiz.Random());
       }
       return questions;
     }
