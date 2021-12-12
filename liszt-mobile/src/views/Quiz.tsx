@@ -49,7 +49,7 @@ const confirmExitModal: React.FC<{
                 backgroundColor: '#62C370',
                 borderRadius: 8,
               }}>
-              <Button title="Continue" color="#fff" onPress={onConfirm} />
+              <Button title="Keep Going" color="#fff" onPress={onCancel} />
             </View>
             <View
               style={{
@@ -57,7 +57,7 @@ const confirmExitModal: React.FC<{
                 backgroundColor: '#E75A7C',
                 borderRadius: 8,
               }}>
-              <Button title="Quit" color="#fff" onPress={onCancel} />
+              <Button title="Quit" color="#fff" onPress={onConfirm} />
             </View>
           </View>
         </View>
@@ -131,6 +131,7 @@ const quiz: React.FC<{}> = props => {
             {
               displayText: 'C',
               value: 0,
+              isAnswer: true,
             },
             {
               displayText: 'D',

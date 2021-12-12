@@ -1,15 +1,41 @@
-import React from 'react';
-import {TouchableHighlight, View, Text, StyleSheet} from 'react-native';
+import React, {useState} from 'react';
+import {
+  TouchableHighlight,
+  View,
+  Text,
+  StyleSheet,
+  Alert,
+  TouchableOpacity,
+} from 'react-native';
 
 type Option = {
   displayText: string;
+  isAnswer?: boolean;
   value: number;
+};
+
+type SelectionState = {
+  selected: boolean;
+  correct: boolean;
 };
 
 const options: React.FC<{
   options: Option[];
 }> = ({options}) => {
-  const opts = options.map(d => option({opt: d}));
+  // Boolean to disable all options
+  const [optionsDisabled, setOptionsDisabled] = useState(false);
+
+  // Disable all options, then verify a selected option and return
+  // it. Used as a callback for Option to set its state.
+  const onOptionChoose = (value: Option): void => {
+    setOptionsDisabled(true);
+  };
+
+  // Create a list of Option components from our list of given options
+  const opts = options.map(d =>
+    option({opt: d, onSelect: onOptionChoose, disabled: optionsDisabled}),
+  );
+
   return (
     <View
       style={{
@@ -20,29 +46,58 @@ const options: React.FC<{
   );
 };
 
+/**
+ * Represents one Option button
+ */
 const option: React.FC<{
   opt: Option;
-}> = ({opt}) => {
+  selection?: SelectionState;
+  onSelect: (value: Option) => void;
+  disabled?: boolean;
+}> = ({opt, onSelect, selection, disabled = false}) => {
+
+  const [selected, setSelected] = useState(false);
+
+  // The selection state of an option
+  // If a button is selected, change border based on its correctness
+  const borderColor = () => {
+    // Change border color of a selected option if it's correct
+    if (selected && !opt.isAnswer) {
+      return '#E75A7C';
+    // If the button gets disabled and this option is the answer, then change
+    // its color to green to indicate which answer was correct.
+    } else if (disabled && opt.isAnswer) {
+      return '#62C370';
+    } else {
+      return '#6e7a87';
+    }
+  };
+
   return (
-    <View style={styles.answerOption} key={opt.value}>
-      <TouchableHighlight
-        underlayColor="#6e7a87"
+    <View
+      style={{
+        ...styles.answerOption,
+        borderColor: borderColor(),
+      }}
+      key={opt.value}>
+      <TouchableOpacity
         style={{
           height: '100%',
           borderRadius: 7,
         }}
+        disabled={disabled}
         onPress={() => {
-          alert('Tapped');
+          const selectionState = onSelect(opt);
+          setSelected(true);
         }}>
         <Text style={styles.answerText}>{opt.displayText}</Text>
-      </TouchableHighlight>
+      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   answerOption: {
-    borderColor: '#6e7a87',
     borderWidth: 1,
     marginVertical: 8,
     height: 50,
