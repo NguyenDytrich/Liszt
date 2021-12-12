@@ -12,6 +12,7 @@ target 'LisztMobile' do
     :hermes_enabled => false
   )
 
+
   target 'LisztMobileTests' do
     inherit! :complete
     # Pods for testing
