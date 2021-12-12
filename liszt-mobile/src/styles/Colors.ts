@@ -4,8 +4,22 @@ export default {
   red: '#E75A7C',
   orange: '#fca311',
   black: '#2e3440',
-  blue: '#88c0d0',
+  blue: '#2c85c9',
   nord: {
-    polarNight: ['#2e3440', '#3B4252', '#434C5E']
-  }
+    polarNight: ['#2e3440', '#3B4252', '#434C5E', '#4c566a'],
+    snowStorm: ['#d8dee9', '#e5e9f0', '#eceff4'],
+    frost: ['#8FBCBB', '#88C0D0', '#81A1C1', '#5E81AC'],
+  },
+  mauves: [
+    '#747BC8',
+    '#8187dc',
+    '#8e94f2',
+    '#9fa0ff',
+    '#ada7ff',
+    '#bbadff',
+    '#cbb2fe',
+    '#dab6fc',
+    '#ddbdfc',
+    '#e0c3fc',
+  ],
 };

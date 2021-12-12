@@ -62,8 +62,7 @@ const styles = StyleSheet.create({
     marginTop: 1,
     marginLeft: 1,
     borderRadius: 50,
-    backgroundColor: '#2C85C9',
-    // backgroundColor: Colors.blue
+    backgroundColor: Colors.blue
   },
 });
 

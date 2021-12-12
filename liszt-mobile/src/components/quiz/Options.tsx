@@ -7,6 +7,7 @@ import {
   Alert,
   TouchableOpacity,
 } from 'react-native';
+import {withSafeAreaInsets} from 'react-native-safe-area-context';
 
 import Colors from '../../styles/Colors';
 
@@ -33,15 +34,31 @@ const options: React.FC<{
     setOptionsDisabled(true);
   };
 
+  const nextBgColor = function* () {
+    let i = 0;
+    while (true) {
+      if (i > Colors.mauves.length) i = 0;
+      yield Colors.mauves[i];
+      i++;
+    }
+  };
+
   // Create a list of Option components from our list of given options
-  const opts = options.map(d =>
-    option({opt: d, onSelect: onOptionChoose, disabled: optionsDisabled}),
+  const opts = options.map((d, i) =>
+    option({
+      opt: d,
+      onSelect: onOptionChoose,
+      disabled: optionsDisabled,
+      color: Colors.black,
+      backgroundColor: Colors.nord.snowStorm[2],
+    }),
   );
 
   return (
     <View
       style={{
         marginHorizontal: 24,
+        marginTop: 88,
       }}>
       {opts}
     </View>
@@ -53,25 +70,27 @@ const options: React.FC<{
  */
 const option: React.FC<{
   opt: Option;
-  selection?: SelectionState;
+  backgroundColor: string;
+  color: string;
   onSelect: (value: Option) => void;
   disabled?: boolean;
-}> = ({opt, onSelect, selection, disabled = false}) => {
-
+}> = ({opt, onSelect, backgroundColor, color, disabled = false}) => {
   const [selected, setSelected] = useState(false);
 
   // The selection state of an option
   // If a button is selected, change border based on its correctness
-  const borderColor = () => {
+  const getColor = (borderBackground: string = 'border') => {
     // Change border color of a selected option if it's correct
     if (selected && !opt.isAnswer) {
       return Colors.red;
-    // If the button gets disabled and this option is the answer, then change
-    // its color to green to indicate which answer was correct.
+      // If the button gets disabled and this option is the answer, then change
+      // its color to green to indicate which answer was correct.
     } else if (disabled && opt.isAnswer) {
       return Colors.green;
     } else {
-      return '#6e7a87';
+      return borderBackground == 'border'
+        ? Colors.nord.snowStorm[0]
+        : backgroundColor;
     }
   };
 
@@ -79,20 +98,26 @@ const option: React.FC<{
     <View
       style={{
         ...styles.answerOption,
-        borderColor: borderColor(),
+        borderColor: getColor(),
+        backgroundColor: getColor('background'),
       }}
       key={opt.value}>
       <TouchableOpacity
         style={{
           height: '100%',
-          borderRadius: 7,
         }}
         disabled={disabled}
         onPress={() => {
           const selectionState = onSelect(opt);
           setSelected(true);
         }}>
-        <Text style={styles.answerText}>{opt.displayText}</Text>
+        <Text
+          style={{
+            ...styles.answerText,
+            color: selected && !opt.isAnswer ? Colors.white : color,
+          }}>
+          {opt.displayText}
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -100,10 +125,11 @@ const option: React.FC<{
 
 const styles = StyleSheet.create({
   answerOption: {
-    borderWidth: 1,
+    borderWidth: 2,
     marginVertical: 8,
     height: 50,
     borderRadius: 8,
+
     // shadowColor: '#000',
     // shadowOffset: {height: 5, width: 0},
     // shadowOpacity: 0.1,
@@ -112,7 +138,6 @@ const styles = StyleSheet.create({
   answerText: {
     textAlign: 'center',
     fontSize: 40,
-    color: Colors.black,
   },
 });
 
