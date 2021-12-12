@@ -2,7 +2,9 @@ import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 
 import Vex from 'vexflow';
-import {ReactNativeSVGContext, NotoFontPack } from 'standalone-vexflow-context';
+import {ReactNativeSVGContext, NotoFontPack} from 'standalone-vexflow-context';
+
+import Colors from '../../styles/Colors';
 
 const prompt: React.FC<{
   displayText: string;
@@ -23,8 +25,9 @@ const prompt: React.FC<{
       <Text
         style={{
           paddingTop: 20,
+          color: Colors.black,
         }}>
-            {displayText}
+        {displayText}
       </Text>
       <SingleNote note="c/4" />
       <Text></Text>
@@ -40,22 +43,29 @@ const SingleNote: React.FC<{
     height: 100,
   });
   const VF = Vex.Flow;
-  const stave = new VF.Stave(0, 0, 99);
+  const stave = new VF.Stave(0, 0, 99, {fill_style: Colors.nord.polarNight[2]});
   const voice = new VF.Voice({num_beats: 1, beat_value: 4});
-  voice.addTickables([
-    new VF.StaveNote({clef: 'treble', keys: ['c/4'], duration: 'q'}),
-  ]);
+
+  const n = new VF.StaveNote({
+    clef: 'treble',
+    keys: ['c/4'],
+    duration: 'q',
+  }).setKeyStyle(0, {
+    strokeStyle: Colors.black,
+    fillStyle: Colors.black,
+  });
+
+  voice.addTickables([n]);
   const formatter = new VF.Formatter().joinVoices([voice]).format([voice], 0);
 
   stave.setContext(vctx);
-  stave.setClef('treble');
+  stave.addClef('treble');
+  stave.getContext().setFillStyle(Colors.black);
 
   stave.draw();
   voice.draw(vctx, stave);
 
-  return(
-      <View>{vctx.render()}</View>
-  )
+  return <View style={{alignItems: 'center'}}>{vctx.render()}</View>;
 };
 
 export default prompt;

@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
+import Colors from '../../styles/Colors';
+
 type Option = {
   displayText: string;
   isAnswer?: boolean;
@@ -63,11 +65,11 @@ const option: React.FC<{
   const borderColor = () => {
     // Change border color of a selected option if it's correct
     if (selected && !opt.isAnswer) {
-      return '#E75A7C';
+      return Colors.red;
     // If the button gets disabled and this option is the answer, then change
     // its color to green to indicate which answer was correct.
     } else if (disabled && opt.isAnswer) {
-      return '#62C370';
+      return Colors.green;
     } else {
       return '#6e7a87';
     }
@@ -110,6 +112,7 @@ const styles = StyleSheet.create({
   answerText: {
     textAlign: 'center',
     fontSize: 40,
+    color: Colors.black,
   },
 });
 

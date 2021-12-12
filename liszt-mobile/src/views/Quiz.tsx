@@ -2,69 +2,15 @@ import React, {useState} from 'react';
 import {SafeAreaView, View, Text, TouchableOpacity, Button} from 'react-native';
 import Modal from 'react-native-modal';
 
-import ProgressBar from '../components/quiz/ProgressBar';
-import Prompt from '../components/quiz/Prompt';
-import Options from '../components/quiz/Options';
 import {useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FAIcon from 'react-native-vector-icons/FontAwesome';
 
-const confirmExitModal: React.FC<{
-  visible: boolean;
-  onCancel: () => void;
-  onConfirm: () => void;
-}> = ({visible, onCancel, onConfirm}) => {
-  return (
-    <View>
-      <Modal animationIn="slideInUp" isVisible={visible} backdropOpacity={0.1}>
-        <View
-          style={{
-            backgroundColor: '#fff',
-            paddingVertical: 26,
-            paddingHorizontal: 24,
-            borderRadius: 16,
-            shadowColor: '#000',
-            shadowOffset: {height: 1, width: 0},
-            shadowOpacity: 0.15,
-            shadowRadius: 5,
-          }}>
-          <View style={{alignItems: 'center', marginBottom: 16}}>
-            <FAIcon name="warning" size={50} color="#F58851" />
-          </View>
-          <Text style={{textAlign: 'center'}}>
-            Your progress won't be saved!
-          </Text>
-          <Text style={{textAlign: 'center'}}>
-            Are you sure you want to quit?
-          </Text>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-around',
-              marginTop: 16,
-            }}>
-            <View
-              style={{
-                width: '40%',
-                backgroundColor: '#62C370',
-                borderRadius: 8,
-              }}>
-              <Button title="Keep Going" color="#fff" onPress={onCancel} />
-            </View>
-            <View
-              style={{
-                width: '40%',
-                backgroundColor: '#E75A7C',
-                borderRadius: 8,
-              }}>
-              <Button title="Quit" color="#fff" onPress={onConfirm} />
-            </View>
-          </View>
-        </View>
-      </Modal>
-    </View>
-  );
-};
+import ProgressBar from '../components/quiz/ProgressBar';
+import Prompt from '../components/quiz/Prompt';
+import Options from '../components/quiz/Options';
+import ExitModal from '../components/quiz/ExitModal';
+import Colors from '../styles/Colors';
 
 const topBar: React.FC<{}> = ({}) => {
   const navigation = useNavigation();
@@ -93,15 +39,15 @@ const topBar: React.FC<{}> = ({}) => {
           </TouchableOpacity>
         </View>
       </View>
-      {confirmExitModal({
-        visible: modalState,
-        onCancel: () => {
+      <ExitModal
+        visible={modalState}
+        onCancel={() => {
           setModalState(!modalState);
-        },
-        onConfirm: () => {
+        }}
+        onConfirm={() => {
           navigation.navigate('Home');
-        },
-      })}
+        }}
+      />
     </View>
   );
 };
@@ -120,6 +66,7 @@ const quiz: React.FC<{}> = props => {
               textAlign: 'center',
               fontWeight: 'bold',
               fontSize: 24,
+              color: Colors.black
             }}>
             Question
           </Text>

@@ -1,5 +1,6 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
+import Colors from '../../styles/Colors';
 
 const progressBar: React.FC<{
   currentQuestion: number;
@@ -54,6 +55,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     width: '15%',
     fontWeight: '600',
+    color: Colors.black
   },
   progressBar: {
     height: 12,
@@ -61,6 +63,7 @@ const styles = StyleSheet.create({
     marginLeft: 1,
     borderRadius: 50,
     backgroundColor: '#2C85C9',
+    // backgroundColor: Colors.blue
   },
 });
 
