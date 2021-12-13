@@ -3,6 +3,7 @@ import ProgressBar from './ProgressBar';
 import Prompt from './Prompt';
 import Question from './Question';
 import ExitModal from './ExitModal';
+import TopBar from './TopBar';
 
 export {
     Options,
@@ -10,4 +11,5 @@ export {
     Prompt,
     Question,
     ExitModal,
+    TopBar,
 }

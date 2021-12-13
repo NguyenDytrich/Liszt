@@ -1,121 +1,88 @@
-import React, {useState} from 'react';
-import {SafeAreaView, View, TouchableOpacity, Animated} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {SafeAreaView, View, TouchableOpacity, Text, Alert} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import {Question, ProgressBar, ExitModal} from '../components/quiz';
+import {Question, TopBar} from '../components/quiz';
 
-const topBar: React.FC<{}> = ({}) => {
-  const navigation = useNavigation();
-  const [modalState, setModalState] = useState(false);
-
-  return (
-    <View
-      style={{
-        flexDirection: 'row-reverse',
-      }}>
-      <View
-        style={{
-          width: '88%',
-        }}>
-        <ProgressBar currentQuestion={6} totalQuestions={10} />
-      </View>
-      <View
-        style={{
-          width: '12%',
-          marginTop: 13,
-          paddingLeft: 16,
-        }}>
-        <View>
-          <TouchableOpacity onPress={() => setModalState(true)}>
-            <Icon name="close" size={30} />
-          </TouchableOpacity>
-        </View>
-      </View>
-      <ExitModal
-        visible={modalState}
-        onCancel={() => {
-          setModalState(!modalState);
-        }}
-        onConfirm={() => {
-          navigation.navigate('Home');
-        }}
-      />
-    </View>
-  );
-};
 const quiz: React.FC<{}> = () => {
-  const questions = [
-    {
-      prompt: {
-        displayText: 'Identify the following pitch',
-        pitch: 'c/4',
-      },
-      options: [
-        {
-          isAnswer: true,
-          displayText: 'C',
-          value: 0,
-        },
-        {
-          displayText: 'D',
-          value: 1,
-        },
-        {
-          displayText: 'E',
-          value: 2,
-        },
-        {
-          displayText: 'F',
-          value: 3,
-        },
-      ],
-    },
-    {
-      prompt: {
-        displayText: 'Identify the following pitch',
-        pitch: 'e/4',
-      },
-      options: [
-        {
-          displayText: 'C',
-          value: 0,
-        },
-        {
-          displayText: 'D',
-          value: 1,
-        },
-        {
-          displayText: 'E',
-          isAnswer: true,
-          value: 2,
-        },
-        {
-          displayText: 'F',
-          value: 3,
-        },
-      ],
-    },
-  ];
-
+  const [isLoading, setLoading] = useState(true);
+  const [question, setQuestion] = useState([]);
   const [questionIndex, setQuestionIndex] = useState(0);
+  const [progress, setProgressMeter] = useState(0);
+  const totalQuestions = 5;
+
+  const fetchNew = async () => {
+    try {
+      const res = await fetch(
+        `http://localhost:5000/question/pitch?count=${totalQuestions}`,
+      );
+      const json = await res.json();
+      const data = json.map(j => {
+        const v = {
+          prompt: {
+            displayText: j.prompt.displayText,
+            pitch: j.prompt.abcString.substring(0, 1).toLowerCase() + '/4',
+          },
+          options: [
+            ...j.optionPool.map((o, i) => {
+              return {displayText: o.letterClass, value: i};
+            }),
+            {
+              isAnswer: true,
+              displayText: j.answer.letterClass,
+              value: 4,
+            },
+          ],
+        };
+        /* Randomize array in-place using Durstenfeld shuffle algorithm */
+        const shuffleArray = array => {
+          for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+          }
+        };
+
+        shuffleArray(v.options);
+        return v;
+      });
+      console.log(data.toString());
+      setQuestion(data);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchNew();
+  }, []);
 
   return (
     <SafeAreaView>
-      {topBar({})}
-      <Question
-        key={questionIndex}
-        question={questions[questionIndex]}
-        onComplete={() => {
-          setTimeout(
-            () =>
-              questionIndex < questions.length - 1
-                ? setQuestionIndex(questionIndex + 1)
-                : setQuestionIndex(0),
-          );
-        }}
-      />
+      {!isLoading ? (
+        <TopBar currentQuestion={progress} totalQuestions={totalQuestions} />
+      ) : null}
+      {!isLoading ? (
+        <Question
+          key={questionIndex}
+          question={question[questionIndex]}
+          onComplete={() => {
+            if (questionIndex < question.length - 1) {
+              setQuestionIndex(questionIndex + 1);
+            } else {
+              alert('Complete!');
+            }
+            setProgressMeter(progress + 1);
+          }}
+        />
+      ) : (
+        <View>
+          <Text>Loading...</Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 };

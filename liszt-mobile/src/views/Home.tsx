@@ -18,7 +18,7 @@ const home: React.FC<{
       <Greeting name="Vivian" />
       <ScrollView contentInsetAdjustmentBehavior="automatic">
         <WeekSummary accuracy={20} />
-        <StartButton />
+        <StartButton text="Quiz me!"/>
       </ScrollView>
     </SafeAreaView>
   );
