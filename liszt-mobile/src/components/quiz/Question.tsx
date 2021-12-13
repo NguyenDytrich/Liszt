@@ -22,19 +22,21 @@ const question: React.FC<{
   useEffect(() => {
     Animated.timing(fade, {
       toValue: 1,
-      duration: 500,
+      duration: 200,
       useNativeDriver: false,
     }).start();
   }, [fade]);
 
-  const answerSubmitted = () => {
-    onComplete();
+  const answerSubmitted = (correct: boolean) => {
+    let delay = correct ? 600 : 2000;
     Animated.timing(fade, {
-      delay: 800,
+      delay,
       toValue: 0,
       duration: 200,
       useNativeDriver: false,
-    }).start();
+    }).start(() => {
+      onComplete();
+    });
   };
 
   return (

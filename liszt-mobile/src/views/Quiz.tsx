@@ -113,7 +113,6 @@ const quiz: React.FC<{}> = () => {
               questionIndex < questions.length - 1
                 ? setQuestionIndex(questionIndex + 1)
                 : setQuestionIndex(0),
-            1000,
           );
         }}
       />

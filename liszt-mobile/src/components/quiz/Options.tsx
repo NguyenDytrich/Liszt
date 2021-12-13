@@ -1,14 +1,5 @@
-import React, {useState} from 'react';
-import {
-  TouchableHighlight,
-  View,
-  Text,
-  StyleSheet,
-  Alert,
-  TouchableOpacity,
-  SliderComponent,
-} from 'react-native';
-import {withSafeAreaInsets} from 'react-native-safe-area-context';
+import React, {useRef, useState} from 'react';
+import {Animated, View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 
 import Colors from '../../styles/Colors';
 
@@ -20,7 +11,7 @@ export type Option = {
 
 const options: React.FC<{
   options: Option[];
-  onAnswerSubmit: () => void;
+  onAnswerSubmit: (correct: boolean) => void;
 }> = ({options, onAnswerSubmit}) => {
   // Boolean to disable all options
   const [optionsDisabled, setOptionsDisabled] = useState(false);
@@ -29,7 +20,7 @@ const options: React.FC<{
   // it. Used as a callback for Option to set its state.
   const onOptionChoose = (value: Option): void => {
     setOptionsDisabled(true);
-    onAnswerSubmit();
+    onAnswerSubmit(value?.isAnswer ? value.isAnswer: false);
   };
 
   const nextBgColor = function* () {
@@ -74,17 +65,48 @@ const option: React.FC<{
   disabled?: boolean;
 }> = ({opt, onSelect, backgroundColor, color, disabled = false}) => {
   const [selected, setSelected] = useState(false);
+  const animation = useRef(new Animated.Value(0)).current;
+
+  const blink = Animated.sequence([
+    Animated.timing(animation, {
+      delay: 100,
+      toValue: 0.5,
+      duration: 100,
+      useNativeDriver: false,
+    }),
+    Animated.timing(animation, {
+      toValue: 1,
+      duration: 100,
+      delay: 100,
+      useNativeDriver: false,
+    }),
+  ]);
 
   // The selection state of an option
   // If a button is selected, change border based on its correctness
   const getColor = (borderBackground: string = 'border') => {
     // Change border color of a selected option if it's correct
-    if (selected && !opt.isAnswer) {
-      return Colors.red;
+    if (selected) {
+      return opt.isAnswer ? Colors.green : Colors.red;
+      // fade.start();
+      // return animation.interpolate({
+      // inputRange: [0, 1],
+      // outputRange: [backgroundColor, Colors.red],
+      // });
+
       // If the button gets disabled and this option is the answer, then change
       // its color to green to indicate which answer was correct.
     } else if (disabled && opt.isAnswer) {
-      return Colors.green;
+      // return Colors.green;
+
+      Animated.loop(blink, {
+        iterations: 3,
+      }).start();
+
+      return animation.interpolate({
+        inputRange: [0, 1],
+        outputRange: [backgroundColor, Colors.green],
+      });
     } else {
       return borderBackground == 'border'
         ? Colors.nord.snowStorm[0]
@@ -93,7 +115,7 @@ const option: React.FC<{
   };
 
   return (
-    <View
+    <Animated.View
       style={{
         ...styles.answerOption,
         borderColor: getColor(),
@@ -117,7 +139,7 @@ const option: React.FC<{
           {opt.displayText}
         </Text>
       </TouchableOpacity>
-    </View>
+    </Animated.View>
   );
 };
 
