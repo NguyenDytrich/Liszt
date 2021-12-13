@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 
 import Vex from 'vexflow';
@@ -8,8 +8,8 @@ import Colors from '../../styles/Colors';
 
 const prompt: React.FC<{
   displayText: string;
-  abcNotation?: string;
-}> = ({displayText, abcNotation}) => {
+  pitch: string;
+}> = ({displayText, pitch}) => {
   return (
     <View
       style={{
@@ -29,7 +29,7 @@ const prompt: React.FC<{
         }}>
         {displayText}
       </Text>
-      <SingleNote note="c/4" />
+      <SingleNote note={pitch} />
       <Text></Text>
     </View>
   );
@@ -48,7 +48,7 @@ const SingleNote: React.FC<{
 
   const n = new VF.StaveNote({
     clef: 'treble',
-    keys: ['c/4'],
+    keys: [note],
     duration: 'q',
   }).setKeyStyle(0, {
     strokeStyle: Colors.black,

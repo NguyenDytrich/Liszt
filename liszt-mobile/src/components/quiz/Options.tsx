@@ -6,25 +6,22 @@ import {
   StyleSheet,
   Alert,
   TouchableOpacity,
+  SliderComponent,
 } from 'react-native';
 import {withSafeAreaInsets} from 'react-native-safe-area-context';
 
 import Colors from '../../styles/Colors';
 
-type Option = {
+export type Option = {
   displayText: string;
   isAnswer?: boolean;
   value: number;
 };
 
-type SelectionState = {
-  selected: boolean;
-  correct: boolean;
-};
-
 const options: React.FC<{
   options: Option[];
-}> = ({options}) => {
+  onAnswerSubmit: () => void;
+}> = ({options, onAnswerSubmit}) => {
   // Boolean to disable all options
   const [optionsDisabled, setOptionsDisabled] = useState(false);
 
@@ -32,6 +29,7 @@ const options: React.FC<{
   // it. Used as a callback for Option to set its state.
   const onOptionChoose = (value: Option): void => {
     setOptionsDisabled(true);
+    onAnswerSubmit();
   };
 
   const nextBgColor = function* () {

@@ -1,16 +1,10 @@
 import React, {useState} from 'react';
-import {SafeAreaView, View, Text, TouchableOpacity, Button} from 'react-native';
-import Modal from 'react-native-modal';
-
+import {SafeAreaView, View, TouchableOpacity, Animated} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import FAIcon from 'react-native-vector-icons/FontAwesome';
 
-import ProgressBar from '../components/quiz/ProgressBar';
-import Prompt from '../components/quiz/Prompt';
-import Options from '../components/quiz/Options';
-import ExitModal from '../components/quiz/ExitModal';
-import Colors from '../styles/Colors';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
+import {Question, ProgressBar, ExitModal} from '../components/quiz';
 
 const topBar: React.FC<{}> = ({}) => {
   const navigation = useNavigation();
@@ -51,50 +45,78 @@ const topBar: React.FC<{}> = ({}) => {
     </View>
   );
 };
+const quiz: React.FC<{}> = () => {
+  const questions = [
+    {
+      prompt: {
+        displayText: 'Identify the following pitch',
+        pitch: 'c/4',
+      },
+      options: [
+        {
+          isAnswer: true,
+          displayText: 'C',
+          value: 0,
+        },
+        {
+          displayText: 'D',
+          value: 1,
+        },
+        {
+          displayText: 'E',
+          value: 2,
+        },
+        {
+          displayText: 'F',
+          value: 3,
+        },
+      ],
+    },
+    {
+      prompt: {
+        displayText: 'Identify the following pitch',
+        pitch: 'e/4',
+      },
+      options: [
+        {
+          displayText: 'C',
+          value: 0,
+        },
+        {
+          displayText: 'D',
+          value: 1,
+        },
+        {
+          displayText: 'E',
+          isAnswer: true,
+          value: 2,
+        },
+        {
+          displayText: 'F',
+          value: 3,
+        },
+      ],
+    },
+  ];
 
-const quiz: React.FC<{}> = props => {
+  const [questionIndex, setQuestionIndex] = useState(0);
+
   return (
     <SafeAreaView>
-      {topBar({...props})}
-      <View style={{backgroundColor: '#fff'}}>
-        <View
-          style={{
-            paddingHorizontal: 24,
-          }}>
-          <Text
-            style={{
-              textAlign: 'center',
-              fontWeight: 'bold',
-              fontSize: 24,
-              color: Colors.black
-            }}>
-            Question
-          </Text>
-          <Prompt displayText="Identify the following pitch..." />
-        </View>
-
-        <Options
-          options={[
-            {
-              displayText: 'C',
-              value: 0,
-              isAnswer: true,
-            },
-            {
-              displayText: 'D',
-              value: 1,
-            },
-            {
-              displayText: 'E',
-              value: 2,
-            },
-            {
-              displayText: 'F',
-              value: 3,
-            },
-          ]}
-        />
-      </View>
+      {topBar({})}
+      <Question
+        key={questionIndex}
+        question={questions[questionIndex]}
+        onComplete={() => {
+          setTimeout(
+            () =>
+              questionIndex < questions.length - 1
+                ? setQuestionIndex(questionIndex + 1)
+                : setQuestionIndex(0),
+            1000,
+          );
+        }}
+      />
     </SafeAreaView>
   );
 };
