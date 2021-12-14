@@ -1,25 +1,8 @@
-import auth from '@react-native-firebase/auth';
-import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
+import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
+import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React, {useEffect, useState} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  ShadowPropTypesIOS,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
-
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import {StyleSheet, View, Text} from 'react-native';
 
 import Home from './src/views/Home';
 import Login from './src/views/Login';
@@ -43,18 +26,20 @@ const Stack = createNativeStackNavigator<RootStackParams>();
 
 const App = () => {
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState();
-  const updateAuth = user => {
+  const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
+  const updateAuth = (user: FirebaseAuthTypes.User | null) => {
+    if (user && user.displayName) {
+      if (loading) setLoading(false);
+    }
     setUser(user);
-    if (loading) setLoading(false);
   };
 
   useEffect(() => {
-    const subscriber = auth().onAuthStateChanged(updateAuth);
+    const subscriber = auth().onUserChanged(updateAuth);
     return subscriber;
   }, []);
 
-  if (loading) return null;
+  // if (loading) return null;
 
   return (
     <NavigationContainer
@@ -66,7 +51,7 @@ const App = () => {
         },
       }}>
       <Stack.Navigator>
-        {auth().currentUser != null ? (
+        {user != null && user.displayName != null ? (
           <>
             <Stack.Screen
               name="Home"

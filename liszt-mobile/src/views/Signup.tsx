@@ -1,7 +1,18 @@
 import React, {useState} from 'react';
-import {Button, SafeAreaView, View, Text, TextInput, Alert} from 'react-native';
+import {
+  Button,
+  SafeAreaView,
+  View,
+  Text,
+  TextInput,
+  Alert,
+  StyleSheet,
+} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import {useNavigation} from '@react-navigation/native';
+
+import Colors from '../styles/Colors';
+import { Login } from '../styles/BaseStyles';
 
 const signup: React.FC<{}> = ({}) => {
   const navigation = useNavigation();
@@ -10,77 +21,86 @@ const signup: React.FC<{}> = ({}) => {
   const [password, setPassword] = useState('');
   const [passwordConf, setPasswordConf] = useState('');
   const [name, setName] = useState('');
+  const [pwdErrs, setPwdErrs] = useState<string | null>();
+
+  const validatePasswords = () => {
+    if (password == passwordConf) {
+      setPwdErrs(null);
+    } else {
+      setPwdErrs('Passwords do not match!');
+    }
+  };
 
   const doSignup = () => {
-    if (password != passwordConf && password != '')
-      return alert('Passwords do not match');
+    if (password != passwordConf && password != '') {
+      setPwdErrs('Passwords do not match!');
+    }
 
-    // TODO
-    // this works but you need to refresh the application for the changes to
-    // happen.
     auth()
       .createUserWithEmailAndPassword(email, password)
-      .then(() => {
-        auth().currentUser?.updateProfile({displayName: name});
+      .then(credentials => {
+        credentials.user.updateProfile({displayName: name});
       })
-      .catch(e => alert(e));
+      .catch(e => {
+        alert(e);
+      });
   };
 
   return (
     <SafeAreaView>
       <View>
-        <Text style={{fontSize: 30}}>Signup</Text>
         <View
           style={{
-            padding: 24,
+            paddingTop: 24,
+            paddingHorizontal: 36,
           }}>
-          <View style={{marginVertical: 16}}>
-            <Text style={{fontSize: 25}}>Email:</Text>
+          <Text style={Login.header}>Sign-up</Text>
+          <View style={Login.labelContainer}>
+            <Text style={Login.label}>Name</Text>
             <TextInput
               textContentType="name"
               placeholder="Your Name"
-              style={{
-                fontSize: 25,
-              }}
+              style={Login.input}
               onChangeText={value => setName(value)}
               defaultValue={name}
             />
           </View>
-          <View style={{marginVertical: 16}}>
-            <Text style={{fontSize: 25}}>Email:</Text>
+          <View style={Login.labelContainer}>
+            <Text style={Login.label}>Email</Text>
             <TextInput
               textContentType="emailAddress"
               placeholder="your.name@email.com"
-              style={{
-                fontSize: 25,
-              }}
+              style={Login.input}
               onChangeText={value => setEmail(value)}
               defaultValue={email}
             />
           </View>
-          <View style={{marginVertical: 16}}>
-            <Text style={{fontSize: 25}}>Password</Text>
+          <View style={Login.labelContainer}>
+            <Text style={Login.label}>Password</Text>
             <TextInput
               textContentType="password"
               placeholder="password"
               secureTextEntry={true}
-              style={{
-                fontSize: 25,
+              style={Login.input}
+              onChangeText={value => {
+                setPassword(value);
               }}
-              onChangeText={value => setPassword(value)}
+              onBlur={validatePasswords}
               defaultValue={password}
             />
+            <Text style={{color: Colors.red}}>{pwdErrs}</Text>
           </View>
-          <View style={{marginVertical: 16}}>
-            <Text style={{fontSize: 25}}>Password (again)</Text>
+          <View style={Login.labelContainer}>
+            <Text style={Login.label}>Password (again)</Text>
             <TextInput
               textContentType="password"
               placeholder="password"
               secureTextEntry={true}
-              style={{
-                fontSize: 25,
+              style={Login.input}
+              onChangeText={value => {
+                setPasswordConf(value);
               }}
-              onChangeText={value => setPasswordConf(value)}
+              onBlur={validatePasswords}
               defaultValue={passwordConf}
             />
           </View>
