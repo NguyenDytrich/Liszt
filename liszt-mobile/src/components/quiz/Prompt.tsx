@@ -50,6 +50,7 @@ const SingleNote: React.FC<{
     clef: 'treble',
     keys: [note],
     duration: 'q',
+    auto_stem: true,
   }).setKeyStyle(0, {
     strokeStyle: Colors.black,
     fillStyle: Colors.black,

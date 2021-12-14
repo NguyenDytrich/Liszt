@@ -1,8 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {SafeAreaView, View, TouchableOpacity, Text, Alert} from 'react-native';
+import {SafeAreaView, View, Text} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import {Question, TopBar} from '../components/quiz';
 
@@ -11,6 +9,7 @@ const quiz: React.FC<{}> = () => {
   const [question, setQuestion] = useState([]);
   const [questionIndex, setQuestionIndex] = useState(0);
   const [progress, setProgressMeter] = useState(0);
+  const navigation = useNavigation();
   const totalQuestions = 5;
 
   const fetchNew = async () => {
@@ -70,12 +69,16 @@ const quiz: React.FC<{}> = () => {
           key={questionIndex}
           question={question[questionIndex]}
           onComplete={() => {
-            if (questionIndex < question.length - 1) {
+            // Move to next question
+            if (questionIndex < question.length - 1)
               setQuestionIndex(questionIndex + 1);
-            } else {
-              alert('Complete!');
-            }
+
+            // Animate the progress bar
             setProgressMeter(progress + 1);
+
+            // End the quiz if we reach the end
+            if (questionIndex == question.length - 1)
+              navigation.navigate('Home');
           }}
         />
       ) : (

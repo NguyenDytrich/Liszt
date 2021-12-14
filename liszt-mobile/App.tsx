@@ -34,7 +34,18 @@ import Home from './src/views/Home';
 import HomeTitle from './src/components/home/Greeting';
 import Quiz from './src/views/Quiz';
 
-const Stack = createNativeStackNavigator();
+type RootStackParams = {
+  Home: undefined;
+  Quiz: undefined;
+};
+
+declare global {
+  namespace ReactNavigation {
+    interface RootParamList extends RootStackParams {}
+  }
+}
+
+const Stack = createNativeStackNavigator<RootStackParams>();
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
