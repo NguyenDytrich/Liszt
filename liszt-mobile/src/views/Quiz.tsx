@@ -6,11 +6,41 @@ import {Question, TopBar} from '../components/quiz';
 
 const quiz: React.FC<{}> = () => {
   const [isLoading, setLoading] = useState(true);
-  const [question, setQuestion] = useState([]);
+  const [questions, setQuestions] = useState([]);
   const [questionIndex, setQuestionIndex] = useState(0);
   const [progress, setProgressMeter] = useState(0);
   const navigation = useNavigation();
   const totalQuestions = 5;
+
+  const mapData = json => {
+    const v = {
+      prompt: {
+        displayText: json.prompt.displayText,
+        pitch: json.prompt.abcString.substring(0, 1).toLowerCase() + '/4',
+      },
+      options: [
+        ...json.optionPool.map((o, i) => {
+          return {displayText: o.letterClass, value: i};
+        }),
+        {
+          isAnswer: true,
+          displayText: json.answer.letterClass,
+          value: 4,
+        },
+      ],
+    };
+
+    /* Randomize array in-place using Durstenfeld shuffle algorithm */
+    const shuffleArray = array => {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    };
+
+    shuffleArray(v.options);
+    return v;
+  };
 
   const fetchNew = async () => {
     try {
@@ -18,36 +48,7 @@ const quiz: React.FC<{}> = () => {
         `http://localhost:5000/question/pitch?count=${totalQuestions}`,
       );
       const json = await res.json();
-      const data = json.map(j => {
-        const v = {
-          prompt: {
-            displayText: j.prompt.displayText,
-            pitch: j.prompt.abcString.substring(0, 1).toLowerCase() + '/4',
-          },
-          options: [
-            ...j.optionPool.map((o, i) => {
-              return {displayText: o.letterClass, value: i};
-            }),
-            {
-              isAnswer: true,
-              displayText: j.answer.letterClass,
-              value: 4,
-            },
-          ],
-        };
-        /* Randomize array in-place using Durstenfeld shuffle algorithm */
-        const shuffleArray = array => {
-          for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-          }
-        };
-
-        shuffleArray(v.options);
-        return v;
-      });
-      console.log(data.toString());
-      setQuestion(data);
+      setQuestions(json);
     } catch (e) {
       // TODO: show some kind of error page
       console.error(e);
@@ -68,17 +69,17 @@ const quiz: React.FC<{}> = () => {
       {!isLoading ? (
         <Question
           key={questionIndex}
-          question={question[questionIndex]}
+          question={mapData(questions[questionIndex])}
           onComplete={() => {
             // Move to next question
-            if (questionIndex < question.length - 1)
+            if (questionIndex < questions.length - 1)
               setQuestionIndex(questionIndex + 1);
 
             // Animate the progress bar
             setProgressMeter(progress + 1);
 
             // End the quiz if we reach the end
-            if (questionIndex == question.length - 1)
+            if (questionIndex == questions.length - 1)
               navigation.navigate('Home');
           }}
         />
