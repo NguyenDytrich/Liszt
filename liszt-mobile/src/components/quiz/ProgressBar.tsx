@@ -1,21 +1,33 @@
-import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import React, {useState, useRef} from 'react';
+import {Animated, View, Text, StyleSheet, Easing} from 'react-native';
 import Colors from '../../styles/Colors';
 
 const progressBar: React.FC<{
   currentQuestion: number;
   totalQuestions: number;
 }> = ({currentQuestion, totalQuestions}) => {
+  const tween = useRef(new Animated.Value(0)).current;
+
+  const anim = Animated.timing(tween, {
+    toValue: (currentQuestion / totalQuestions),
+    duration: 300,
+    useNativeDriver: false,
+    easing: Easing.ease,
+  }).start();
+
   return (
     <View
       style={{
         ...styles.container,
       }}>
       <View style={styles.barContainer}>
-        <View
+        <Animated.View
           style={{
             ...styles.progressBar,
-            width: `${(currentQuestion / totalQuestions) * 100}%`,
+            width: tween.interpolate({
+              inputRange: [0, 1],
+              outputRange: ['0%', '100%']
+            }),
           }}
         />
       </View>
@@ -55,14 +67,14 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     width: '15%',
     fontWeight: '600',
-    color: Colors.black
+    color: Colors.black,
   },
   progressBar: {
     height: 12,
     marginTop: 1,
     marginLeft: 1,
     borderRadius: 50,
-    backgroundColor: Colors.blue
+    backgroundColor: Colors.blue,
   },
 });
 
