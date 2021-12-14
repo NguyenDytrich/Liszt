@@ -49,6 +49,7 @@ const quiz: React.FC<{}> = () => {
       console.log(data.toString());
       setQuestion(data);
     } catch (e) {
+      // TODO: show some kind of error page
       console.error(e);
     } finally {
       setLoading(false);
@@ -83,6 +84,7 @@ const quiz: React.FC<{}> = () => {
         />
       ) : (
         <View>
+          {/* TODO: replace with a spinner :) */}
           <Text>Loading...</Text>
         </View>
       )}

@@ -2,6 +2,7 @@ import React, {useRef, useEffect} from 'react';
 import {Animated, View, Text} from 'react-native';
 
 import Colors from '../../styles/Colors';
+import { QuestionAnim } from '../../styles/AnimationConfig';
 import Options, {Option} from './Options';
 import Prompt from './Prompt';
 
@@ -19,20 +20,22 @@ const question: React.FC<{
 }> = ({question, onComplete}) => {
   const fade = useRef(new Animated.Value(0)).current;
 
+  // Fade in on load
   useEffect(() => {
     Animated.timing(fade, {
       toValue: 1,
-      duration: 200,
+      duration: QuestionAnim.fadeTime,
       useNativeDriver: false,
     }).start();
   }, [fade]);
 
+  // When an answer is submitted, fade out
   const answerSubmitted = (correct: boolean) => {
-    let delay = correct ? 600 : 2000;
+    let delay = correct ? QuestionAnim.correctDelay : QuestionAnim.incorrectDelay;
     Animated.timing(fade, {
       delay,
       toValue: 0,
-      duration: 200,
+      duration: QuestionAnim.fadeTime,
       useNativeDriver: false,
     }).start(() => {
       onComplete();

@@ -2,6 +2,7 @@ import React, {useRef, useState} from 'react';
 import {Animated, View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 
 import Colors from '../../styles/Colors';
+import {OptionsAnim} from '../../styles/AnimationConfig';
 
 export type Option = {
   displayText: string;
@@ -20,7 +21,7 @@ const options: React.FC<{
   // it. Used as a callback for Option to set its state.
   const onOptionChoose = (value: Option): void => {
     setOptionsDisabled(true);
-    onAnswerSubmit(value?.isAnswer ? value.isAnswer: false);
+    onAnswerSubmit(value?.isAnswer ? value.isAnswer : false);
   };
 
   const nextBgColor = function* () {
@@ -69,15 +70,15 @@ const option: React.FC<{
 
   const blink = Animated.sequence([
     Animated.timing(animation, {
-      delay: 100,
+      delay: OptionsAnim.blinkDelay,
       toValue: 0.5,
-      duration: 100,
+      duration: OptionsAnim.blinkTime,
       useNativeDriver: false,
     }),
     Animated.timing(animation, {
       toValue: 1,
-      duration: 100,
-      delay: 100,
+      duration: OptionsAnim.blinkDelay,
+      delay: OptionsAnim.blinkTime,
       useNativeDriver: false,
     }),
   ]);
@@ -100,7 +101,7 @@ const option: React.FC<{
       // return Colors.green;
 
       Animated.loop(blink, {
-        iterations: 3,
+        iterations: OptionsAnim.blinkIterations,
       }).start();
 
       return animation.interpolate({
@@ -149,11 +150,6 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     height: 50,
     borderRadius: 8,
-
-    // shadowColor: '#000',
-    // shadowOffset: {height: 5, width: 0},
-    // shadowOpacity: 0.1,
-    // shadowRadius: 2,
   },
   answerText: {
     textAlign: 'center',

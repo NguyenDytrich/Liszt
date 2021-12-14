@@ -1,16 +1,7 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
-
+import auth from '@react-native-firebase/auth';
 import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -31,12 +22,15 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 import Home from './src/views/Home';
-import HomeTitle from './src/components/home/Greeting';
+import Login from './src/views/Login';
 import Quiz from './src/views/Quiz';
+import Signup from './src/views/Signup';
 
 type RootStackParams = {
   Home: undefined;
   Quiz: undefined;
+  Login: undefined;
+  Signup: undefined;
 };
 
 declare global {
@@ -48,7 +42,19 @@ declare global {
 const Stack = createNativeStackNavigator<RootStackParams>();
 
 const App = () => {
-  const isDarkMode = useColorScheme() === 'dark';
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState();
+  const updateAuth = user => {
+    setUser(user);
+    if (loading) setLoading(false);
+  };
+
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(updateAuth);
+    return subscriber;
+  }, []);
+
+  if (loading) return null;
 
   return (
     <NavigationContainer
@@ -60,18 +66,37 @@ const App = () => {
         },
       }}>
       <Stack.Navigator>
-        <Stack.Screen
-          name="Home"
-          component={Home}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="Quiz"
-          component={Quiz}
-          options={{headerShown: false}}
-        />
+        {auth().currentUser != null ? (
+          <>
+            <Stack.Screen
+              name="Home"
+              component={Home}
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="Quiz"
+              component={Quiz}
+              options={{headerShown: false}}
+            />
+          </>
+        ) : (
+          <>
+            <Stack.Screen
+              name="Login"
+              component={Login}
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="Signup"
+              component={Signup}
+              options={{headerShown: false}}
+            />
+          </>
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );
