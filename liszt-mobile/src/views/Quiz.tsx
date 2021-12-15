@@ -12,36 +12,6 @@ const quiz: React.FC<{}> = () => {
   const navigation = useNavigation();
   const totalQuestions = 5;
 
-  const mapData = json => {
-    const v = {
-      prompt: {
-        displayText: json.prompt.displayText,
-        pitch: json.prompt.abcString.substring(0, 1).toLowerCase() + '/4',
-      },
-      options: [
-        ...json.optionPool.map((o, i) => {
-          return {displayText: o.letterClass, value: i};
-        }),
-        {
-          isAnswer: true,
-          displayText: json.answer.letterClass,
-          value: 4,
-        },
-      ],
-    };
-
-    /* Randomize array in-place using Durstenfeld shuffle algorithm */
-    const shuffleArray = array => {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
-    };
-
-    shuffleArray(v.options);
-    return v;
-  };
-
   const fetchNew = async () => {
     try {
       const res = await fetch(
@@ -69,7 +39,7 @@ const quiz: React.FC<{}> = () => {
       {!isLoading ? (
         <Question
           key={questionIndex}
-          question={mapData(questions[questionIndex])}
+          question={questions[questionIndex]}
           onComplete={() => {
             // Move to next question
             if (questionIndex < questions.length - 1)

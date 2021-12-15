@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Animated, View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 
 import Colors from '../../styles/Colors';
@@ -12,29 +12,21 @@ export type Option = {
 
 const options: React.FC<{
   options: Option[];
-  onAnswerSubmit: (correct: boolean) => void;
+  onAnswerSubmit: (value: Option) => void;
 }> = ({options, onAnswerSubmit}) => {
   // Boolean to disable all options
   const [optionsDisabled, setOptionsDisabled] = useState(false);
 
+  
   // Disable all options, then verify a selected option and return
   // it. Used as a callback for Option to set its state.
   const onOptionChoose = (value: Option): void => {
     setOptionsDisabled(true);
-    onAnswerSubmit(value?.isAnswer ? value.isAnswer : false);
-  };
-
-  const nextBgColor = function* () {
-    let i = 0;
-    while (true) {
-      if (i > Colors.mauves.length) i = 0;
-      yield Colors.mauves[i];
-      i++;
-    }
+    onAnswerSubmit(value);
   };
 
   // Create a list of Option components from our list of given options
-  const opts = options.map((d, i) =>
+  const opts = options.map(d =>
     option({
       opt: d,
       onSelect: onOptionChoose,
@@ -89,11 +81,6 @@ const option: React.FC<{
     // Change border color of a selected option if it's correct
     if (selected) {
       return opt.isAnswer ? Colors.green : Colors.red;
-      // fade.start();
-      // return animation.interpolate({
-      // inputRange: [0, 1],
-      // outputRange: [backgroundColor, Colors.red],
-      // });
 
       // If the button gets disabled and this option is the answer, then change
       // its color to green to indicate which answer was correct.
