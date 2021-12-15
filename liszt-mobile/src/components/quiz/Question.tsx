@@ -5,6 +5,7 @@ import Colors from '../../styles/Colors';
 import {QuestionAnim} from '../../styles/AnimationConfig';
 import Options, {Option} from './Options';
 import Prompt from './Prompt';
+import auth from '@react-native-firebase/auth';
 
 type Question = {
   prompt: {
@@ -76,17 +77,34 @@ const question: React.FC<{
     }).start();
   }, [fade]);
 
-  // When an answer is submitted, fade out
   const answerSubmitted = (value: Option) => {
     submissionData.submittedAt = new Date();
     submissionData.submittedAnswer =
       value.value == 4 ? question.answer : question.optionPool[value.value];
 
-    console.log(JSON.stringify(submissionData));
+    // TODO: batch this request at the end of the quiz. Currently the API doesn't support this.
+    if (auth().currentUser) {
+      fetch('http://localhost:5000/question/answer', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: auth().currentUser?.uid,
+          recievedAt: submissionData.recievedAt,
+          submittedAt: submissionData.submittedAt,
+          submittedAnswer: submissionData.submittedAnswer,
+          question,
+        }),
+      });
+    }
 
+    // TODO: a better way to do this may be to pass this as a prop to chain after the blink?
+    // When an answer is submitted, fade out
     let delay = value.isAnswer
-      ? QuestionAnim.correctDelay
-      : QuestionAnim.incorrectDelay;
+      ? QuestionAnim.correctDelay // Move on faster than when incorrect
+      : QuestionAnim.incorrectDelay; // Take longer so the correct answer can be blinked
     Animated.timing(fade, {
       delay,
       toValue: 0,
