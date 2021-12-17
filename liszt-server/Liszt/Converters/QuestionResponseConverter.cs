@@ -46,7 +46,6 @@ namespace Liszt.Converters
 
       return new
       {
-        UserId = value.UserId,
         Correct = value.Correct,
         SubmittedAt = value.SubmittedAt,
         RecievedAt = value.RecievedAt,

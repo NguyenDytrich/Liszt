@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics.Contracts;
 using System.Text.Json.Nodes;
 using Google.Cloud.Firestore;
 using Liszt.Converters;
@@ -12,8 +11,6 @@ namespace Liszt.Models
   [FirestoreData(ConverterType = typeof(QuestionResponseConverter))]
   public class FirestoreQuestionResponse
   {
-    public string UserId { get; set; }
-
     public bool Correct { get; set; }
 
     public DateTime SubmittedAt { get; set; }
@@ -24,6 +21,7 @@ namespace Liszt.Models
 
     public JsonNode SubmittedAnswer { get; set; }
 
-    public double DwellTimeSeconds { get => (SubmittedAt - RecievedAt).TotalSeconds; }
+    /// <value>Time spent on a this quesiton</value>
+    public double DwellTimeSeconds => (SubmittedAt - RecievedAt).TotalSeconds;
   }
 }

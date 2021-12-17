@@ -48,32 +48,5 @@ namespace Liszt.Controllers
       }
       return questions;
     }
-
-    /// <summary>
-    /// Validates a submitted question, then serializes it and stores it in Firestore
-    /// </summary>
-    /// <param name="requestBody"></param>
-    /// <returns></returns>
-    [HttpPost("answer")]
-    public async Task<FirestoreQuestionResponse> Post(AnswerSubmission requestBody)
-    {
-      var answerType = (string)requestBody.SubmittedAnswer["type"];
-      var questionType = (string)requestBody.Question["type"];
-
-      FirestoreQuestionResponse firestore;
-      if (questionType == "multiple_choice" && answerType == "pitch_class")
-      {
-        var response = MultipleChoiceConverter.FromDTO<Notation, PitchClass>(requestBody);
-        response.Correct = response.SubmittedAnswer == response.Question.Answer;
-        firestore = response.ToFirestore();
-
-        var reference = await _firestore.Collection($"question_responses").AddAsync(firestore);
-      }
-      else
-      {
-        throw new ArgumentException($"Invalid question-answer type pair: {questionType}, {answerType}");
-      }
-      return firestore;
-    }
   }
 }

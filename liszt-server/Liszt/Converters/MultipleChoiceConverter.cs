@@ -38,7 +38,6 @@ namespace Liszt.Converters
 
       return new QuestionResponse<MultipleChoice<P, T>, P, T>
       {
-        UserId = response.UserId,
         SubmittedAt = response.SubmittedAt,
         RecievedAt = response.RecievedAt,
         Question = questionData,
