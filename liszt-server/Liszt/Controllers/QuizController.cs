@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Liszt.Converters;
 using Liszt.Models;
@@ -29,8 +31,8 @@ namespace Liszt.Controllers
     /// <returns></returns>
     [HttpPost]
     public async Task<FirestoreQuiz> Post(QuizSubmissionArgs requestBody)
+    // public async Task<QuizSubmission> Post(QuizSubmissionArgs requestBody)
     {
-      var quizId = Guid.NewGuid();
       var responses = new List<FirestoreQuestionResponse>();
 
       foreach (var s in requestBody.Responses)
@@ -39,16 +41,20 @@ namespace Liszt.Controllers
         responses.Add(f);
       }
 
-      var quiz = new FirestoreQuiz()
+      var quiz = new QuizSubmission()
       {
+        QuizId = Guid.NewGuid(),
         UserId = requestBody.UserId,
-        QuizId = quizId.ToString(),
-        Responses = responses,
+        Responses = requestBody.Responses
+                      .Select(r => ConvertAnswer(r))
+                      .ToList(),
+        SubmissionDate = requestBody.SubmissionDate.GetValueOrDefault(),
       };
 
-      await _firestore.Collection("quizzes").AddAsync(quiz);
+      var fsQuiz = quiz.ToFirestore();
+      await _firestore.Collection("quizzes").AddAsync(fsQuiz);
 
-      return quiz;
+      return fsQuiz;
     }
 
     private FirestoreQuestionResponse ConvertAnswer(AnswerSubmission submission)

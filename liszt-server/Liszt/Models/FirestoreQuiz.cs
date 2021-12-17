@@ -21,6 +21,28 @@ namespace Liszt.Models
     public string UserId { get; set; }
 
     [FirestoreProperty]
+    public DateTime SubmissionDate { get; set; }
+
+    [FirestoreProperty]
     public ICollection<FirestoreQuestionResponse> Responses { get; set; }
+
+    [FirestoreProperty]
+    public FirestoreQuizMetadata Metadata { get; set; }
+  }
+
+  [FirestoreData]
+  public class FirestoreQuizMetadata
+  {
+    [FirestoreProperty]
+    public int TotalCorrect { get; set; }
+
+    [FirestoreProperty]
+    public int TotalQuestions { get; set; }
+
+    [FirestoreProperty]
+    public double Accuracy { get; set; }
+
+    [FirestoreProperty]
+    public double AverageDwellTime { get; set; }
   }
 }

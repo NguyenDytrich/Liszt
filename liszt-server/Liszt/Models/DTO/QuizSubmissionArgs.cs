@@ -6,7 +6,7 @@ namespace Liszt.Models.DTO
   public class QuizSubmissionArgs
   {
     public string UserId { get; set; }
-    public DateOnly? SubmissionDate { get; set; }
+    public DateTime? SubmissionDate { get; set; }
     public ICollection<AnswerSubmission> Responses { get; set; }
   }
 }
