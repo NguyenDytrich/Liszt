@@ -1,95 +1,89 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
+import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
+import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import React, {useEffect, useState} from 'react';
+import {StyleSheet, View, Text} from 'react-native';
 
-import React from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import Home from './src/views/Home';
+import Login from './src/views/Login';
+import Quiz from './src/views/Quiz';
+import Signup from './src/views/Signup';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-const Section: React.FC<{
-  title: string;
-}> = ({children, title}) => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
+type RootStackParams = {
+  Home: undefined;
+  Quiz: undefined;
+  Login: undefined;
+  Signup: undefined;
 };
 
-const App = () => {
-  const isDarkMode = useColorScheme() === 'dark';
+declare global {
+  namespace ReactNavigation {
+    interface RootParamList extends RootStackParams {}
+  }
+}
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+const Stack = createNativeStackNavigator<RootStackParams>();
+
+const App = () => {
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
+  const updateAuth = (user: FirebaseAuthTypes.User | null) => {
+    if (user && user.displayName) {
+      if (loading) setLoading(false);
+    }
+    setUser(user);
   };
 
+  useEffect(() => {
+    const subscriber = auth().onUserChanged(updateAuth);
+    return subscriber;
+  }, []);
+
+  // if (loading) return null;
+
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <NavigationContainer
+      theme={{
+        ...DefaultTheme,
+        colors: {
+          ...DefaultTheme.colors,
+          background: '#fff',
+        },
+      }}>
+      <Stack.Navigator>
+        {user != null && user.displayName != null ? (
+          <>
+            <Stack.Screen
+              name="Home"
+              component={Home}
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="Quiz"
+              component={Quiz}
+              options={{headerShown: false}}
+            />
+          </>
+        ) : (
+          <>
+            <Stack.Screen
+              name="Login"
+              component={Login}
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="Signup"
+              component={Signup}
+              options={{headerShown: false}}
+            />
+          </>
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 
@@ -109,6 +103,27 @@ const styles = StyleSheet.create({
   },
   highlight: {
     fontWeight: '700',
+  },
+  answerOption: {
+    borderColor: '#F49CBB',
+    borderWidth: 2,
+    marginVertical: 8,
+    height: 50,
+    borderRadius: 8,
+    // shadowColor: '#000',
+    // shadowOffset: {height: 5, width: 0},
+    // shadowOpacity: 0.1,
+    // shadowRadius: 2,
+  },
+  answerText: {
+    textAlign: 'center',
+    fontSize: 40,
+  },
+  shadow: {
+    shadowColor: '#000',
+    shadowOffset: {height: 1, width: 0},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
 });
 
