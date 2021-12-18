@@ -74,7 +74,7 @@ namespace Liszt.Converters.Firestore
       {
         Type = (string)value["type"],
         DisplayText = (string)value["displayText"],
-        ABCString = (string)value["abcString"]
+        Notation = (string)value["midiNotation"]
       };
     }
   }

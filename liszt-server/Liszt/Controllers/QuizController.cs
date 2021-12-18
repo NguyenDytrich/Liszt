@@ -47,7 +47,7 @@ namespace Liszt.Controllers
         Responses = requestBody.Responses
                       .Select(r => ConvertAnswer(r))
                       .ToList(),
-        SubmissionDate = requestBody.SubmissionDate.GetValueOrDefault(),
+        SubmissionDate = requestBody.SubmissionDate.GetValueOrDefault(DateTime.Now),
       };
 
       var fsQuiz = quiz.ToFirestore();

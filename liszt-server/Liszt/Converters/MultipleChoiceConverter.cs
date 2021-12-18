@@ -71,7 +71,7 @@ namespace Liszt.Converters
           prompt = new Notation()
           {
             DisplayText = (string) question["prompt"]["displayText"],
-            ABCString = (string) question["prompt"]["abcString"]
+            MidiNotation = (string) question["prompt"]["midiNotation"]
           } as P;
           break;
         default:
