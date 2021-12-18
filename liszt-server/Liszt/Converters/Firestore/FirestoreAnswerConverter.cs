@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using Google.Cloud.Firestore;
 
@@ -21,8 +23,13 @@ namespace Liszt.Converters.Firestore
       };
     }
 
-    public JsonNode FromFirestore(object value) {
-      throw new NotImplementedException();
+    public JsonNode FromFirestore(object value)
+    {
+      if (value is IDictionary<string, object> map)
+      {
+        return JsonSerializer.SerializeToNode(map);
+      }
+      throw new ArgumentException($"Unknown type: {value.GetType()}");
     }
 
     private object ConvertPitchClass(JsonNode value) => new

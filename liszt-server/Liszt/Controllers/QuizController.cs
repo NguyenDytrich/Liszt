@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Liszt.Converters;
 using Liszt.Models;
@@ -55,6 +54,14 @@ namespace Liszt.Controllers
       await _firestore.Collection("quizzes").AddAsync(fsQuiz);
 
       return fsQuiz;
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<FirestoreQuiz>> Get()
+    {
+      var docRef = await _firestore.Collection("quizzes").GetSnapshotAsync();
+      var snapshot = docRef.FirstOrDefault();
+      return snapshot.Exists ? snapshot.ConvertTo<FirestoreQuiz>() : NotFound();
     }
 
     private FirestoreQuestionResponse ConvertAnswer(AnswerSubmission submission)

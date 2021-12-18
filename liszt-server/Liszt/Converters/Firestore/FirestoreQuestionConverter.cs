@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using Google.Cloud.Firestore;
 using Liszt.Quiz.Prompts;
@@ -28,13 +29,17 @@ namespace Liszt.Converters.Firestore
           firestoreObj.Add("OptionPool", optionPool);
           return firestoreObj;
         default:
-          throw new ArgumentException($"Unkown type: {type} for object {value.ToJsonString()}");
+          throw new ArgumentException($"Unknown type: {type} for object {value.ToJsonString()}");
       }
     }
 
     public JsonNode FromFirestore(object value)
     {
-      throw new NotImplementedException();
+      if (value is IDictionary<string, object> map)
+      {
+        return JsonSerializer.SerializeToNode(value);
+      }
+      throw new ArgumentException($"Unknown type: {value.GetType()}");
     }
 
     protected static class MultipleChoiceConverter
