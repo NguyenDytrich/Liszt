@@ -1,21 +1,24 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {SafeAreaView, Button, View, Text} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
 import {Question, TopBar} from '../components/quiz';
 import auth from '@react-native-firebase/auth';
+import {
+  Question as QuestionType,
+  SubmissionData,
+} from '../components/quiz/types';
 
 const quiz: React.FC<{}> = () => {
   const [isLoading, setLoading] = useState(true);
-  const [questions, setQuestions] = useState([]);
-  // TODO: don't set this to any...
-  const [responses, setResponses] = useState<any>([]);
+  const [questions, setQuestions] = useState<QuestionType[]>([]);
+  let responses = useRef<SubmissionData[]>([]).current;
   const [isComplete, setCompleted] = useState(false);
   const [metadata, setMetadata] = useState({});
   const [questionIndex, setQuestionIndex] = useState(0);
   const [progress, setProgressMeter] = useState(0);
   const navigation = useNavigation();
-  const totalQuestions = 3;
+  const totalQuestions = 2;
 
   const fetchNew = async () => {
     try {
@@ -68,8 +71,10 @@ const quiz: React.FC<{}> = () => {
           key={questionIndex}
           question={questions[questionIndex]}
           onComplete={response => {
+            console.log(JSON.stringify(response));
             // Add the completed question to the responses
-            setResponses([...responses, response]);
+            responses.push(response);
+            console.log(JSON.stringify(responses));
 
             // Move to next question
             if (questionIndex < questions.length - 1)

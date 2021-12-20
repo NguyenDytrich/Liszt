@@ -5,7 +5,7 @@ import Colors from '../../styles/Colors';
 import {QuestionAnim} from '../../styles/AnimationConfig';
 import Options from './Options';
 import Prompt from './Prompt';
-import {Question, SubmissionData, Option} from './types';
+import {Question, SubmissionData, OptionProps} from './types';
 import {parsePrompt, parseOptions, shuffleArray} from './utils';
 
 const question: React.FC<{
@@ -35,7 +35,7 @@ const question: React.FC<{
     }).start();
   }, [fade]);
 
-  const answerSubmitted = (value: Option) => {
+  const answerSubmitted = (value: OptionProps) => {
     submissionData.submittedAt = new Date();
 
     // 4 is the value always given to the answer... for some reason.
