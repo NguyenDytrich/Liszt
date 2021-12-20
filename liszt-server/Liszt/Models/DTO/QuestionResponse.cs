@@ -15,8 +15,6 @@ namespace Liszt.Models.DTO
     where Q : Question<P>
     where P : Prompt
   {
-    public string UserId { get; set; }
-
     public DateTime SubmittedAt { get; set; }
 
     public DateTime RecievedAt { get; set; }
@@ -27,15 +25,22 @@ namespace Liszt.Models.DTO
     public TimeSpan DwellTime => SubmittedAt - RecievedAt;
     public bool Correct { get; set; }
 
-    public FirestoreQuestionResponse ToFirestore() => new FirestoreQuestionResponse {
-      UserId = UserId,
+    /// <summary>
+    /// Converts a typed <c>QuestionResponse</c> into a JSON-serializable object for
+    /// Firestore.
+    /// </summary>
+    /// <returns></returns>
+    public FirestoreQuestionResponse ToFirestore() => new FirestoreQuestionResponse
+    {
       SubmittedAt = SubmittedAt,
       RecievedAt = RecievedAt,
       Correct = Correct,
-      Question = JsonSerializer.SerializeToNode(Question, new JsonSerializerOptions {
+      Question = JsonSerializer.SerializeToNode(Question, new JsonSerializerOptions
+      {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
       }),
-      SubmittedAnswer = JsonSerializer.SerializeToNode(SubmittedAnswer, new JsonSerializerOptions {
+      SubmittedAnswer = JsonSerializer.SerializeToNode(SubmittedAnswer, new JsonSerializerOptions
+      {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
       })
     };
