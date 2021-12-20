@@ -80,26 +80,10 @@ const question: React.FC<{
 
   const answerSubmitted = (value: Option) => {
     submissionData.submittedAt = new Date();
+
+    // 4 is the value always given to the answer... for some reason.
     submissionData.submittedAnswer =
       value.value == 4 ? question.answer : question.optionPool[value.value];
-
-    // TODO: batch this request at the end of the quiz. Currently the API doesn't support this.
-    if (auth().currentUser) {
-      fetch('http://localhost:5000/question/answer', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: auth().currentUser?.uid,
-          recievedAt: submissionData.recievedAt,
-          submittedAt: submissionData.submittedAt,
-          submittedAnswer: submissionData.submittedAnswer,
-          question,
-        }),
-      });
-    }
 
     // TODO: a better way to do this may be to pass this as a prop to chain after the blink?
     // When an answer is submitted, fade out
@@ -112,7 +96,12 @@ const question: React.FC<{
       duration: QuestionAnim.fadeTime,
       useNativeDriver: false,
     }).start(() => {
-      onComplete();
+      onComplete({
+        recievedAt: submissionData.recievedAt,
+        submittedAt: submissionData.submittedAt,
+        submittedAnswer: submissionData.submittedAnswer,
+        question,
+      });
     });
   };
 
