@@ -8,9 +8,10 @@ namespace Liszt.Quiz.Builders
 {
   public class SingleNoteRecognition : AnswerPool<PitchClass>
   {
-    public SingleNoteRecognition(string baseUri) : base(baseUri) {}
+    public SingleNoteRecognition(string baseUri) : base(baseUri) { }
 
-    public MultipleChoice<Notation, PitchClass> Random(string prompt = "Identify the following pitch.") {
+    public MultipleChoice<Notation, PitchClass> Random(string prompt = "Identify the following pitch.")
+    {
       var rand = new Random();
       // Get some a random set of options
       var answerOptions = RandomAnswerOptions();
@@ -19,12 +20,13 @@ namespace Liszt.Quiz.Builders
       // Choose various octaves for the display pitch
       // Without doing so, the range will be from A4 - D4
 
-      var _prompt = new Notation() {
+      var _prompt = new Notation()
+      {
         DisplayText = prompt,
-        ABCString = $"{answerOptions.Answer.LetterClass}2|]"
+        MidiNotation = $"{answerOptions.Answer.LetterClass}/{rand.Next(4, 6)}"
       };
 
-        //prompt = (prompt as Notation).ABCString = "C2|]";
+      //prompt = (prompt as Notation).ABCString = "C2|]";
 
       // Cast our result to our new flash question
       return new MultipleChoice<Notation, PitchClass>()
