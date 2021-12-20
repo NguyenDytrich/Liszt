@@ -1,29 +1,32 @@
 using System;
-using System.Diagnostics.Contracts;
 using System.Text.Json.Nodes;
 using Google.Cloud.Firestore;
-using Liszt.Converters;
+using Liszt.Converters.Firestore;
 
 namespace Liszt.Models
 {
   /// <summary>
   /// A DTO for storing and retrieving documents in Firestore
   /// </summary>
-  [FirestoreData(ConverterType = typeof(QuestionResponseConverter))]
+  [FirestoreData]
   public class FirestoreQuestionResponse
   {
-    public string UserId { get; set; }
-
+    [FirestoreProperty]
     public bool Correct { get; set; }
 
+    [FirestoreProperty]
     public DateTime SubmittedAt { get; set; }
 
+    [FirestoreProperty]
     public DateTime RecievedAt { get; set; }
 
+    [FirestoreProperty(ConverterType = typeof(FirestoreQuestionConverter))]
     public JsonNode Question { get; set; }
 
+    [FirestoreProperty(ConverterType = typeof(FirestoreAnswerConverter))]
     public JsonNode SubmittedAnswer { get; set; }
 
-    public double DwellTimeSeconds { get => (SubmittedAt - RecievedAt).TotalSeconds; }
+    /// <value>Time spent on a this quesiton</value>
+    public double DwellTimeSeconds => (SubmittedAt - RecievedAt).TotalSeconds;
   }
 }

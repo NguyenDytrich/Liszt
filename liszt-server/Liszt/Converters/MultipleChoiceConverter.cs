@@ -38,7 +38,6 @@ namespace Liszt.Converters
 
       return new QuestionResponse<MultipleChoice<P, T>, P, T>
       {
-        UserId = response.UserId,
         SubmittedAt = response.SubmittedAt,
         RecievedAt = response.RecievedAt,
         Question = questionData,
@@ -72,7 +71,7 @@ namespace Liszt.Converters
           prompt = new Notation()
           {
             DisplayText = (string) question["prompt"]["displayText"],
-            ABCString = (string) question["prompt"]["abcString"]
+            MidiNotation = (string) question["prompt"]["midiNotation"]
           } as P;
           break;
         default:
