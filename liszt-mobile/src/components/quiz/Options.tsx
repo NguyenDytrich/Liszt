@@ -3,12 +3,9 @@ import {Animated, View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 
 import Colors from '../../styles/Colors';
 import {OptionsAnim} from '../../styles/AnimationConfig';
+import {Option} from './types';
 
-export type Option = {
-  displayText: string;
-  isAnswer?: boolean;
-  value: number;
-};
+
 
 const options: React.FC<{
   options: Option[];

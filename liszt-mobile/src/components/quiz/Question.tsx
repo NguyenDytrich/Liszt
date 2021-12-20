@@ -3,23 +3,10 @@ import {Animated, View, Text} from 'react-native';
 
 import Colors from '../../styles/Colors';
 import {QuestionAnim} from '../../styles/AnimationConfig';
-import Options, {Option} from './Options';
+import Options from './Options';
 import Prompt from './Prompt';
-import auth from '@react-native-firebase/auth';
-
-type Question = {
-  prompt: {
-    displayText: string;
-    pitch: string;
-  };
-  options: Option[];
-};
-
-type SubmissionData = {
-  recievedAt: Date | undefined;
-  submittedAt: Date | undefined;
-  submittedAnswer: string | undefined;
-};
+import {Question, SubmissionData, Option} from './types';
+import {parsePrompt, parseOptions, shuffleArray} from './utils';
 
 const question: React.FC<{
   question: Question;
@@ -33,37 +20,7 @@ const question: React.FC<{
     submittedAnswer: undefined,
   };
 
-  const parsePrompt = json => {
-    return {
-      displayText: json.prompt.displayText,
-      pitch: json.prompt.midiNotation,
-    };
-  };
   const prompt = parsePrompt(question);
-
-  // Parse the optionPool and answer into an array
-  const parseOptions = json => {
-    const v = [
-      ...json.optionPool.map((o, i) => {
-        return {displayText: o.letterClass, value: i};
-      }),
-      {
-        isAnswer: true,
-        displayText: json.answer.letterClass,
-        value: 4,
-      },
-    ];
-
-    return v;
-  };
-
-  /* Randomize array in-place using Durstenfeld shuffle algorithm */
-  const shuffleArray = (array: any[]) => {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-  };
 
   // Parse out the options from the API response and shuffle it.
   const options = parseOptions(question);
