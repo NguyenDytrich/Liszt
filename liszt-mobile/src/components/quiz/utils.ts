@@ -1,24 +1,52 @@
-export const parsePrompt = json => {
-  return {
-    displayText: json.prompt.displayText,
-    pitch: json.prompt.midiNotation,
-  };
+import {
+  Question,
+  OptionProps,
+  PromptTypes,
+  Notation,
+  Option,
+  OptionTypes,
+  PitchClassOption,
+} from './types';
+
+export const parsePrompt = (json: Question) => {
+  switch (json.prompt.type) {
+    case PromptTypes.Notation:
+      return {
+        displayText: json.prompt.displayText,
+        pitch: (json.prompt as Notation).midiNotation,
+      };
+    default:
+      throw new Error(
+        `Unexpected or unsupported type: ${json.prompt.type} while parsing prompt.`,
+      );
+  }
 };
 
 // Parse the optionPool and answer into an array
-export const parseOptions = json => {
+export const parseOptions = (json: Question): OptionProps[] => {
   const v = [
-    ...json.optionPool.map((o, i) => {
-      return {displayText: o.letterClass, value: i};
-    }),
+    ...json.optionPool.map((o, i) => parseOption(o, i)),
     {
       isAnswer: true,
-      displayText: json.answer.letterClass,
-      value: 4,
+      ...parseOption(json.answer, 4)
     },
   ];
 
   return v;
+};
+
+const parseOption = (option: Option, index: number): OptionProps => {
+  switch (option.type) {
+    case OptionTypes.PitchClass:
+      return {
+        displayText: (option as PitchClassOption).letterClass,
+        value: index,
+      };
+    default:
+      throw new Error(
+        `Unexpected or unsupported type: ${option.type} while parsing prompt.`,
+      );
+  }
 };
 
 /* Randomize array in-place using Durstenfeld shuffle algorithm */

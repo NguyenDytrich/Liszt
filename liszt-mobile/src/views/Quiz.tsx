@@ -6,6 +6,7 @@ import {Question, TopBar} from '../components/quiz';
 import auth from '@react-native-firebase/auth';
 import {
   Question as QuestionType,
+  QuizMetadata,
   SubmissionData,
 } from '../components/quiz/types';
 
@@ -14,11 +15,11 @@ const quiz: React.FC<{}> = () => {
   const [questions, setQuestions] = useState<QuestionType[]>([]);
   let responses = useRef<SubmissionData[]>([]).current;
   const [isComplete, setCompleted] = useState(false);
-  const [metadata, setMetadata] = useState({});
+  const [metadata, setMetadata] = useState<QuizMetadata>();
   const [questionIndex, setQuestionIndex] = useState(0);
   const [progress, setProgressMeter] = useState(0);
   const navigation = useNavigation();
-  const totalQuestions = 2;
+  const totalQuestions = 5;
 
   const fetchNew = async () => {
     try {
@@ -71,10 +72,8 @@ const quiz: React.FC<{}> = () => {
           key={questionIndex}
           question={questions[questionIndex]}
           onComplete={response => {
-            console.log(JSON.stringify(response));
             // Add the completed question to the responses
             responses.push(response);
-            console.log(JSON.stringify(responses));
 
             // Move to next question
             if (questionIndex < questions.length - 1)
@@ -92,7 +91,7 @@ const quiz: React.FC<{}> = () => {
         />
       </>
     );
-  } else if (!isLoading && isComplete) {
+  } else if (!isLoading && isComplete && metadata) {
     page = (
       <>
         <View>
