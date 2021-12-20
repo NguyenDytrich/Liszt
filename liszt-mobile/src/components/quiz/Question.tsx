@@ -23,7 +23,8 @@ type SubmissionData = {
 
 const question: React.FC<{
   question: Question;
-  onComplete: () => void;
+  // TODO: don't set this to any
+  onComplete: (response: any) => void;
 }> = ({question, onComplete}) => {
   const fade = useRef(new Animated.Value(0)).current;
   const submissionData: SubmissionData = {
@@ -35,7 +36,7 @@ const question: React.FC<{
   const parsePrompt = json => {
     return {
       displayText: json.prompt.displayText,
-      pitch: json.prompt.abcString.substring(0, 1).toLowerCase() + '/4',
+      pitch: json.prompt.midiNotation,
     };
   };
   const prompt = parsePrompt(question);

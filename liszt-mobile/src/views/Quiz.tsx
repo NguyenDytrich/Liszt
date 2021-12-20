@@ -7,6 +7,9 @@ import {Question, TopBar} from '../components/quiz';
 const quiz: React.FC<{}> = () => {
   const [isLoading, setLoading] = useState(true);
   const [questions, setQuestions] = useState([]);
+  // TODO: don't set this to any...
+  const [responses, setResponses] = useState<any>([]);
+  const [isComplete, setCompleted] = useState(false);
   const [questionIndex, setQuestionIndex] = useState(0);
   const [progress, setProgressMeter] = useState(0);
   const navigation = useNavigation();
@@ -31,16 +34,18 @@ const quiz: React.FC<{}> = () => {
     fetchNew();
   }, []);
 
-  return (
-    <SafeAreaView>
-      {!isLoading ? (
+  let page;
+  if (!isLoading && !isComplete) {
+    page = (
+      <>
         <TopBar currentQuestion={progress} totalQuestions={totalQuestions} />
-      ) : null}
-      {!isLoading ? (
         <Question
           key={questionIndex}
           question={questions[questionIndex]}
-          onComplete={() => {
+          onComplete={response => {
+            // Add the completed question to the responses
+            setResponses([...responses, response]);
+
             // Move to next question
             if (questionIndex < questions.length - 1)
               setQuestionIndex(questionIndex + 1);
@@ -49,18 +54,24 @@ const quiz: React.FC<{}> = () => {
             setProgressMeter(progress + 1);
 
             // End the quiz if we reach the end
-            if (questionIndex == questions.length - 1)
-              navigation.navigate('Home');
+            if (questionIndex == questions.length - 1) setCompleted(true);
+            // navigation.navigate('Home');
           }}
         />
-      ) : (
+      </>
+    );
+  } else {
+    page = (
+      <>
         <View>
           {/* TODO: replace with a spinner :) */}
           <Text>Loading...</Text>
         </View>
-      )}
-    </SafeAreaView>
-  );
+      </>
+    );
+  }
+
+  return <SafeAreaView>{page}</SafeAreaView>;
 };
 
 export default quiz;
