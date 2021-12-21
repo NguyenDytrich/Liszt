@@ -8,12 +8,14 @@ import Home from './src/views/Home';
 import Login from './src/views/Login';
 import Quiz from './src/views/Quiz';
 import Signup from './src/views/Signup';
+import Profile from './src/views/Profile';
 
 type RootStackParams = {
   Home: undefined;
   Quiz: undefined;
   Login: undefined;
   Signup: undefined;
+  Profile: {userId: string};
 };
 
 declare global {
@@ -63,6 +65,12 @@ const App = () => {
             <Stack.Screen
               name="Quiz"
               component={Quiz}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="Profile"
+              component={Profile}
+              initialParams={{userId: user.uid}}
               options={{headerShown: false}}
             />
           </>

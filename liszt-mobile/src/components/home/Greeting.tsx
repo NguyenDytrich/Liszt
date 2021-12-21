@@ -1,26 +1,45 @@
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import Colors from '../../styles/Colors';
 
 const greeting: React.FC<{
   name: string;
 }> = ({name}) => {
+  const navigation = useNavigation();
   return (
-    <View style={{
-      backgroundColor: '#58A2DA',
-      height: 200,
-      width: '100%',
-      borderBottomLeftRadius: 24,
-      borderBottomRightRadius: 24,
-    }}>
-      <View style={{
-        height: 100,
-        width: 100,
-        backgroundColor: '#fff',
-        borderRadius: 50,
-        alignSelf: 'center',
-        marginVertical: 16
-      }} />
+    <View
+      style={{
+        backgroundColor: '#58A2DA',
+        height: 200,
+        width: '100%',
+        borderBottomLeftRadius: 24,
+        borderBottomRightRadius: 24,
+      }}>
+      <View
+        style={{
+          height: 100,
+          width: 100,
+          backgroundColor: '#fff',
+          borderRadius: 50,
+          alignSelf: 'center',
+          marginVertical: 16,
+        }}
+      />
       <Text style={styles.greeting}>Hi, {name}!</Text>
+      <View style={{flexDirection: 'row', justifyContent: 'center', marginTop: 5}}>
+        <View>
+          <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+            <Text style={{color: Colors.white, textDecorationLine: 'underline'}}>Profile</Text>
+          </TouchableOpacity>
+        </View>
+        <Text style={{color: Colors.white}}> | </Text>
+        <View>
+          <TouchableOpacity>
+            <Text style={{color: Colors.white, textDecorationLine: 'underline'}}>Settings</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
   );
 };
@@ -31,7 +50,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     textAlign: 'center',
     color: '#fff',
-    fontWeight: '600'
+    fontWeight: '600',
   },
 });
 
