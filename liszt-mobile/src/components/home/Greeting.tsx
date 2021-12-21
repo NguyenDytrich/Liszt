@@ -1,6 +1,9 @@
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import FAIcon from 'react-native-vector-icons/FontAwesome';
+import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import Colors from '../../styles/Colors';
 
 const greeting: React.FC<{
@@ -26,20 +29,18 @@ const greeting: React.FC<{
           marginVertical: 16,
         }}
       />
-      <Text style={styles.greeting}>Hi, {name}!</Text>
-      <View style={{flexDirection: 'row', justifyContent: 'center', marginTop: 5}}>
-        <View>
-          <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-            <Text style={{color: Colors.white, textDecorationLine: 'underline'}}>Profile</Text>
-          </TouchableOpacity>
-        </View>
-        <Text style={{color: Colors.white}}> | </Text>
-        <View>
-          <TouchableOpacity>
-            <Text style={{color: Colors.white, textDecorationLine: 'underline'}}>Settings</Text>
-          </TouchableOpacity>
-        </View>
+      <View style={{position: 'absolute', top: 8, right: 8}}>
+        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+          <FAIcon name="user-circle-o" size={30} color={Colors.white} />
+        </TouchableOpacity>
       </View>
+      <View style={{position: 'absolute', top: 8, left: 8}}>
+        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+          <FAIcon name="cog" size={30} color={Colors.white} />
+        </TouchableOpacity>
+      </View>
+
+      <Text style={styles.greeting}>Hi, {name}!</Text>
     </View>
   );
 };
