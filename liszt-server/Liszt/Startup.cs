@@ -1,4 +1,6 @@
-﻿using Liszt.Services;
+﻿using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
+using Liszt.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -20,6 +22,11 @@ namespace Liszt
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
+      FirebaseApp.Create(new AppOptions()
+      {
+        Credential = GoogleCredential.GetApplicationDefault(),
+      });
+
       services.AddSingleton<IFirestoreDb>(
           o => new FirestoreDbWrapper(Configuration["Firebase:ProjectId"]));
 
@@ -40,7 +47,7 @@ namespace Liszt
         app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Liszt v1"));
       }
 
-      app.UseHttpsRedirection();
+      // app.UseHttpsRedirection();
 
       app.UseRouting();
 
