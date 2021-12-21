@@ -2,7 +2,7 @@ import React, {useEffect, useState, useRef} from 'react';
 import {SafeAreaView, Button, View, Text} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
-import {Question, TopBar} from '../components/quiz';
+import {PostQuiz, Question, TopBar} from '../components/quiz';
 import auth from '@react-native-firebase/auth';
 import {
   Question as QuestionType,
@@ -18,7 +18,6 @@ const quiz: React.FC<{}> = () => {
   const [metadata, setMetadata] = useState<QuizMetadata>();
   const [questionIndex, setQuestionIndex] = useState(0);
   const [progress, setProgressMeter] = useState(0);
-  const navigation = useNavigation();
   const totalQuestions = 5;
 
   const fetchNew = async () => {
@@ -35,6 +34,22 @@ const quiz: React.FC<{}> = () => {
       setLoading(false);
     }
   };
+
+  const reset = async() => {
+    setLoading(true);
+    setCompleted(false);
+    setMetadata(undefined);
+    setQuestions([]);
+    setQuestionIndex(0);
+    setProgressMeter(0);
+
+    // Reset the responses
+    while(responses.length > 0) {
+      responses.pop();
+    }
+
+    fetchNew();
+  }
 
   const submitQuiz = async () => {
     setLoading(true);
@@ -79,6 +94,7 @@ const quiz: React.FC<{}> = () => {
             if (questionIndex < questions.length - 1)
               setQuestionIndex(questionIndex + 1);
 
+            // TODO: Animate the progress bar to 100% before moving on
             // Animate the progress bar
             setProgressMeter(progress + 1);
 
@@ -93,15 +109,7 @@ const quiz: React.FC<{}> = () => {
     );
   } else if (!isLoading && isComplete && metadata) {
     page = (
-      <>
-        <View>
-          <Text>You answered {metadata.totalQuestions}</Text>
-          <Text>and got {metadata.totalCorrect} correct!</Text>
-          <Text>That's {metadata.accuracy * 100}% correct!</Text>
-          <Text>Average response time: {metadata.averageDwellTime}s</Text>
-          <Button title="Home" onPress={() => navigation.navigate('Home')} />
-        </View>
-      </>
+      <PostQuiz metadata={metadata} onReset={reset}/>
     );
   } else {
     page = (
