@@ -4,6 +4,7 @@ import Prompt from './Prompt';
 import Question from './Question';
 import ExitModal from './ExitModal';
 import TopBar from './TopBar';
+import PostQuiz from './PostQuiz';
 
 export {
     Options,
@@ -12,4 +13,5 @@ export {
     Question,
     ExitModal,
     TopBar,
+    PostQuiz,
 }

@@ -3,16 +3,13 @@ import {Animated, View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 
 import Colors from '../../styles/Colors';
 import {OptionsAnim} from '../../styles/AnimationConfig';
+import {OptionProps} from './types';
 
-export type Option = {
-  displayText: string;
-  isAnswer?: boolean;
-  value: number;
-};
+
 
 const options: React.FC<{
-  options: Option[];
-  onAnswerSubmit: (value: Option) => void;
+  options: OptionProps[];
+  onAnswerSubmit: (value: OptionProps) => void;
 }> = ({options, onAnswerSubmit}) => {
   // Boolean to disable all options
   const [optionsDisabled, setOptionsDisabled] = useState(false);
@@ -20,7 +17,7 @@ const options: React.FC<{
   
   // Disable all options, then verify a selected option and return
   // it. Used as a callback for Option to set its state.
-  const onOptionChoose = (value: Option): void => {
+  const onOptionChoose = (value: OptionProps): void => {
     setOptionsDisabled(true);
     onAnswerSubmit(value);
   };
@@ -51,10 +48,10 @@ const options: React.FC<{
  * Represents one Option button
  */
 const option: React.FC<{
-  opt: Option;
+  opt: OptionProps;
   backgroundColor: string;
   color: string;
-  onSelect: (value: Option) => void;
+  onSelect: (value: OptionProps) => void;
   disabled?: boolean;
 }> = ({opt, onSelect, backgroundColor, color, disabled = false}) => {
   const [selected, setSelected] = useState(false);
