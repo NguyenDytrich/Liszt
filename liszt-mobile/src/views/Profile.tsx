@@ -25,15 +25,15 @@ const Profile: React.FC<{
 
   useEffect(() => {
     setUser(auth().currentUser);
-    setProfile({
-      displayName: user?.displayName,
-      name: user?.name,
-      pronouns: 'they/them',
-      email: user?.email,
-      instruments: 'piano, cello, guitar',
-    });
     if (user) {
-      setLoading(false);
+      fetchProfile()
+        .then(() => {
+          setLoading(false);
+        })
+        .catch(() => {
+          alert('Error loading profile');
+          navigation.navigate('Home');
+        });
     }
   }, [user]);
 
@@ -42,9 +42,29 @@ const Profile: React.FC<{
     setProfile({...profile, ...property});
   };
 
+  const fetchProfile = async () => {
+    const jwt = await auth().currentUser?.getIdToken();
+    const res = await fetch('http://localhost:5000/profile', {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+    if (res.ok) {
+      const json = await res.json();
+      setProfile({
+        displayName: json.displayName,
+        name: json.name,
+        pronouns: json.pronouns,
+        instruments: json.instruments,
+      });
+    } else {
+      throw new Error(res.statusText);
+    }
+  };
+
   const returnHome = () => {
     if (isUnsaved) {
-        setShowModal(true);
+      setShowModal(true);
     } else {
       navigation.navigate('Home');
     }
@@ -56,12 +76,14 @@ const Profile: React.FC<{
     <SafeAreaView>
       <WarningModal
         visible={showModal}
-        confirmButtonText='Keep editing'
-        cancelButtonText='Go back'
+        confirmButtonText="Keep editing"
+        cancelButtonText="Go back"
         onCancel={() => navigation.navigate('Home')}
         onConfirm={() => setShowModal(false)}>
         <Text style={{textAlign: 'center'}}>You have unsaved changes!</Text>
-        <Text style={{textAlign: 'center'}}>Are you sure you want to leave?</Text>
+        <Text style={{textAlign: 'center'}}>
+          Are you sure you want to leave?
+        </Text>
       </WarningModal>
       <View style={styles.container}>
         <View style={{justifyContent: 'flex-end', flexDirection: 'row'}}>
