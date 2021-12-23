@@ -3,12 +3,15 @@ import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, Text} from 'react-native';
+import {Provider} from 'react-redux';
+import {store} from './src/store';
 
 import Home from './src/views/Home';
 import Login from './src/views/Login';
 import Quiz from './src/views/Quiz';
 import Signup from './src/views/Signup';
 import Profile from './src/views/Profile';
+import { fetchProfile } from './src/store/UserSlice';
 
 type RootStackParams = {
   Home: undefined;
@@ -29,8 +32,10 @@ const Stack = createNativeStackNavigator<RootStackParams>();
 const App = () => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
+
   const updateAuth = (user: FirebaseAuthTypes.User | null) => {
-    if (user && user.displayName) {
+    if (user) {
+      store.dispatch(fetchProfile());
       if (loading) setLoading(false);
     }
     setUser(user);
@@ -44,54 +49,56 @@ const App = () => {
   // if (loading) return null;
 
   return (
-    <NavigationContainer
-      theme={{
-        ...DefaultTheme,
-        colors: {
-          ...DefaultTheme.colors,
-          background: '#fff',
-        },
-      }}>
-      <Stack.Navigator>
-        {user != null && user.displayName != null ? (
-          <>
-            <Stack.Screen
-              name="Home"
-              component={Home}
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="Quiz"
-              component={Quiz}
-              options={{headerShown: false}}
-            />
-            <Stack.Screen
-              name="Profile"
-              component={Profile}
-              initialParams={{userId: user.uid}}
-              options={{headerShown: false}}
-            />
-          </>
-        ) : (
-          <>
-            <Stack.Screen
-              name="Login"
-              component={Login}
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="Signup"
-              component={Signup}
-              options={{headerShown: false}}
-            />
-          </>
-        )}
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer
+        theme={{
+          ...DefaultTheme,
+          colors: {
+            ...DefaultTheme.colors,
+            background: '#fff',
+          },
+        }}>
+        <Stack.Navigator>
+          {user != null && user.displayName != null ? (
+            <>
+              <Stack.Screen
+                name="Home"
+                component={Home}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="Quiz"
+                component={Quiz}
+                options={{headerShown: false}}
+              />
+              <Stack.Screen
+                name="Profile"
+                component={Profile}
+                initialParams={{userId: user.uid}}
+                options={{headerShown: false}}
+              />
+            </>
+          ) : (
+            <>
+              <Stack.Screen
+                name="Login"
+                component={Login}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="Signup"
+                component={Signup}
+                options={{headerShown: false}}
+              />
+            </>
+          )}
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 };
 

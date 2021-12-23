@@ -5,21 +5,15 @@ import auth from '@react-native-firebase/auth';
 import WeekSummary from '../components/home/WeekSummary';
 import Greeting from '../components/home/Greeting';
 import StartButton from '../components/home/StartButton';
-import {isSearchBarAvailableForCurrentPlatform} from 'react-native-screens';
+import {store, useAppDispatch, useAppSelector} from '../store';
+import { fetchProfile } from '../store/UserSlice';
 
-type User = {
-  displayName: string;
-};
-
-const home: React.FC<{
-  user: User;
-}> = ({user}) => {
-  // const [name, setName] = useState('');
-  const name = auth().currentUser?.displayName;
+const home: React.FC<{}> = () => {
+  const displayName = useAppSelector(state => state.user.displayName);
 
   return (
     <SafeAreaView style={{backgroundColor: '#fff'}}>
-      <Greeting name={name == null || name == undefined ? '' : name} />
+      <Greeting name={displayName} />
       <ScrollView contentInsetAdjustmentBehavior="automatic">
         <WeekSummary accuracy={20} />
         <StartButton text="Quiz me!" />
