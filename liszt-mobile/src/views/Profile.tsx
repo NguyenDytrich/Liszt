@@ -1,5 +1,6 @@
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {
+  Button,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -12,12 +13,20 @@ import {useNavigation} from '@react-navigation/native';
 import Colors from '../styles/Colors';
 import WarningModal from '../components/lib/WarningModal';
 
+export interface UserProfile {
+  displayName?: string,
+  name?: string,
+  pronouns?: string,
+  instruments?: string,
+  email?: string
+}
+
 const Profile: React.FC<{
   userId: string;
 }> = ({userId}) => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
-  const [profile, setProfile] = useState({});
+  const [profile, setProfile] = useState<UserProfile>({});
   const [isUnsaved, setUnsaved] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
@@ -37,7 +46,7 @@ const Profile: React.FC<{
     }
   }, [user]);
 
-  const updateProfile = (property: {}) => {
+  const updateProfile = (property: UserProfile) => {
     setUnsaved(true);
     setProfile({...profile, ...property});
   };
@@ -59,6 +68,29 @@ const Profile: React.FC<{
       });
     } else {
       throw new Error(res.statusText);
+    }
+  };
+
+  const saveProfile = async () => {
+    const jwt = await auth().currentUser?.getIdToken();
+    const res = await fetch('http://localhost:5000/profile', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId: auth().currentUser?.uid,
+        displayName: profile.displayName,
+        name: profile.name,
+        pronouns: profile.pronouns,
+        instruments: profile.instruments,
+      }),
+    });
+    if (res.ok) {
+      setUnsaved(false);
+    } else {
+      alert('Error saving profile');
     }
   };
 
@@ -125,6 +157,7 @@ const Profile: React.FC<{
           onChangeText={value => updateProfile({instruments: value})}
         />
       </View>
+      {isUnsaved ? <Button title="Save" onPress={() => saveProfile()} /> : null}
     </SafeAreaView>
   ) : null;
 };
