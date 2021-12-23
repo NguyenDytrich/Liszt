@@ -1,4 +1,3 @@
-import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {
   Button,
   SafeAreaView,
@@ -6,92 +5,39 @@ import {
   Text,
   View,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useRef} from 'react';
 import TextFormField from '../components/form/TextFormField';
 import {useNavigation} from '@react-navigation/native';
 import Colors from '../styles/Colors';
 import WarningModal from '../components/lib/WarningModal';
+import {store, useAppDispatch, useAppSelector} from '../store';
+import {UserActions, syncProfile} from '../store/UserSlice';
 
 export interface UserProfile {
-  displayName?: string,
-  name?: string,
-  pronouns?: string,
-  instruments?: string,
-  email?: string
+  displayName?: string;
+  name?: string;
+  pronouns?: string;
+  instruments?: string;
+  email?: string;
 }
 
-const Profile: React.FC<{
-  userId: string;
-}> = ({userId}) => {
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
-  const [profile, setProfile] = useState<UserProfile>({});
+const Profile: React.FC<{}> = () => {
   const [isUnsaved, setUnsaved] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const dispatch = useAppDispatch();
+  const profile = useAppSelector(state => state.user);
+  const initialProfile = useRef({...store.getState().user}).current;
 
   const navigation = useNavigation();
 
-  useEffect(() => {
-    setUser(auth().currentUser);
-    if (user) {
-      fetchProfile()
-        .then(() => {
-          setLoading(false);
-        })
-        .catch(() => {
-          alert('Error loading profile');
-          navigation.navigate('Home');
-        });
-    }
-  }, [user]);
-
   const updateProfile = (property: UserProfile) => {
     setUnsaved(true);
-    setProfile({...profile, ...property});
-  };
-
-  const fetchProfile = async () => {
-    const jwt = await auth().currentUser?.getIdToken();
-    const res = await fetch('http://localhost:5000/profile', {
-      headers: {
-        Authorization: `Bearer ${jwt}`,
-      },
+    dispatch({
+      type: UserActions.UPDATE_PROFILE,
+      payload: property,
     });
-    if (res.ok) {
-      const json = await res.json();
-      setProfile({
-        displayName: json.displayName,
-        name: json.name,
-        pronouns: json.pronouns,
-        instruments: json.instruments,
-      });
-    } else {
-      throw new Error(res.statusText);
-    }
-  };
-
-  const saveProfile = async () => {
-    const jwt = await auth().currentUser?.getIdToken();
-    const res = await fetch('http://localhost:5000/profile', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${jwt}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        userId: auth().currentUser?.uid,
-        displayName: profile.displayName,
-        name: profile.name,
-        pronouns: profile.pronouns,
-        instruments: profile.instruments,
-      }),
-    });
-    if (res.ok) {
-      setUnsaved(false);
-    } else {
-      alert('Error saving profile');
-    }
   };
 
   const returnHome = () => {
@@ -102,15 +48,20 @@ const Profile: React.FC<{
     }
   };
 
-  if (loading) return null;
-
-  return user != null ? (
+  return (
     <SafeAreaView>
       <WarningModal
         visible={showModal}
         confirmButtonText="Keep editing"
         cancelButtonText="Go back"
-        onCancel={() => navigation.navigate('Home')}
+        onCancel={() => {
+          navigation.navigate('Home');
+          // Reset the profile
+          dispatch({
+            type: UserActions.UPDATE_PROFILE,
+            payload: initialProfile,
+          });
+        }}
         onConfirm={() => setShowModal(false)}>
         <Text style={{textAlign: 'center'}}>You have unsaved changes!</Text>
         <Text style={{textAlign: 'center'}}>
@@ -146,20 +97,34 @@ const Profile: React.FC<{
           value={profile.pronouns}
           onChangeText={value => updateProfile({pronouns: value})}
         />
+        {/*
         <TextFormField
           labelText="Email"
           value={profile.email}
           onChangeText={value => updateProfile({email: value})}
         />
+        */}
         <TextFormField
           labelText="Instruments"
           value={profile.instruments}
           onChangeText={value => updateProfile({instruments: value})}
         />
       </View>
-      {isUnsaved ? <Button title="Save" onPress={() => saveProfile()} /> : null}
+      {isUnsaved ? (
+        <Button
+          title="Save"
+          onPress={() => {
+            dispatch(
+              syncProfile(
+                () => setUnsaved(false),
+                () => Alert.alert('Error saving profile'),
+              ),
+            );
+          }}
+        />
+      ) : null}
     </SafeAreaView>
-  ) : null;
+  );
 };
 
 const styles = StyleSheet.create({

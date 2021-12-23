@@ -14,6 +14,7 @@
     "@react-native-firebase/auth": "^13.1.0",
     "@react-navigation/native": "^6.0.6",
     "@react-navigation/native-stack": "^6.2.5",
+    "@reduxjs/toolkit": "^1.7.1",
     "abcjs": "^5.12.0",
     "react": "17.0.2",
     "react-native": "0.66.3",
@@ -23,6 +24,9 @@
     "react-native-screens": "^3.10.1",
     "react-native-svg": "^12.1.1",
     "react-native-vector-icons": "^9.0.0",
+    "react-redux": "^7.2.6",
+    "redux": "^4.1.2",
+    "redux-thunk": "^2.4.1",
     "standalone-vexflow-context": "^0.1.1",
     "vexflow": "^3.0.9"
   },
