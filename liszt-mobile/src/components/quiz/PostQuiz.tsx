@@ -31,11 +31,11 @@ const postQuiz: React.FC<{
         <Text
           style={{
             top: -123,
-            left: 5,
+            left: 0,
             fontSize: 24,
             textAlign: 'center',
           }}>
-          {metadata.accuracy * 100}%
+          {metadata.accuracy * 100}
         </Text>
         <Text style={{top: -120, left: 2, textAlign: 'center'}}>Accuracy</Text>
       </View>
