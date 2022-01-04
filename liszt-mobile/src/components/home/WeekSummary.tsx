@@ -1,13 +1,22 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+  Animated,
+} from 'react-native';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {LineChart, YAxis, AreaChart, Grid} from 'react-native-svg-charts';
 import * as shape from 'd3-shape';
 import Colors from '../../styles/Colors';
+import {useNavigation} from '@react-navigation/native';
 
 const weekSummary: React.FC<{
   accuracy: number;
 }> = ({accuracy}) => {
+  const navigation = useNavigation();
   return (
     <View
       style={{
@@ -32,10 +41,16 @@ const weekSummary: React.FC<{
           <View>
             <View style={{flexDirection: 'row', marginBottom: 4}}>
               <MCIcon name="book-open" size={20} color={Colors.green} />
-              <Text style={{paddingTop: 4, paddingLeft: 5}}>130 questions!</Text>
+              <Text style={{paddingTop: 4, paddingLeft: 5}}>
+                130 questions!
+              </Text>
             </View>
             <View style={{flexDirection: 'row'}}>
-              <MCIcon name="crosshairs-question" size={20} color={Colors.orange} />
+              <MCIcon
+                name="crosshairs-question"
+                size={20}
+                color={Colors.orange}
+              />
               <Text style={{paddingTop: 4, paddingLeft: 5}}>100 accuracy!</Text>
             </View>
           </View>
@@ -48,13 +63,37 @@ const weekSummary: React.FC<{
       </View>
       <View style={{}}>
         <View style={layout.statBox}>
-          <Text>Single Notes</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Quiz')}>
+            <View
+              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+              <Text style={{fontSize: 20}}>Single Notes</Text>
+              <Animated.View>
+                <MCIcon name="chevron-right" size={20} color={Colors.black} />
+              </Animated.View>
+            </View>
+          </TouchableOpacity>
         </View>
         <View style={layout.statBox}>
-          <Text>Intervals</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Quiz')}>
+            <View
+              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+              <Text style={{fontSize: 20}}>Intervals</Text>
+              <Animated.View>
+                <MCIcon name="chevron-right" size={20} color={Colors.black} />
+              </Animated.View>
+            </View>
+          </TouchableOpacity>
         </View>
         <View style={layout.statBox}>
-          <Text>Chords</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Quiz')}>
+            <View
+              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+              <Text style={{fontSize: 20}}>Chords</Text>
+              <Animated.View>
+                <MCIcon name="chevron-right" size={20} color={Colors.black} />
+              </Animated.View>
+            </View>
+          </TouchableOpacity>
         </View>
         {/*
         <View style={layout.statBox}>
